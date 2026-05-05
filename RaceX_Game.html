@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RaceX — Play Now</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#050a0e; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:'Rajdhani',sans-serif; overflow:hidden; }
+
+  #startScreen, #gameOverScreen {
+    position:fixed; inset:0; z-index:100;
+    background:rgba(5,10,14,.97);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px;
+    transition: opacity .4s;
+  }
+  #gameOverScreen { display:none; }
+
+  .logo { font-family:'Orbitron',sans-serif; font-size:3.5rem; font-weight:900; color:#00f5ff; text-shadow:0 0 30px #00f5ff; letter-spacing:6px; }
+  .logo span { color:#ff2d55; }
+  .tagline { color:#5a7a8a; font-size:1.1rem; letter-spacing:2px; }
+  .big-car { font-size:5rem; animation: bounce .8s ease-in-out infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-15px)} }
+
+  .controls-hint {
+    background:rgba(0,245,255,.06); border:1px solid rgba(0,245,255,.2);
+    border-radius:12px; padding:16px 30px; text-align:center;
+    color:#aaa; font-size:.95rem; line-height:1.8;
+  }
+  .controls-hint strong { color:#00f5ff; }
+
+  .btn-play {
+    background:linear-gradient(135deg,#ff2d55,#ff6b35);
+    color:#fff; border:none; border-radius:8px;
+    font-family:'Orbitron',sans-serif; font-size:1.1rem; font-weight:700; letter-spacing:3px;
+    padding:16px 50px; cursor:pointer;
+    box-shadow:0 0 30px rgba(255,45,85,.5);
+    transition:transform .1s, box-shadow .2s;
+  }
+  .btn-play:hover { transform:scale(1.05); box-shadow:0 0 50px rgba(255,45,85,.7); }
+
+  #hud {
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 24px;
+    background:rgba(5,10,14,.8); backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(0,245,255,.1);
+  }
+  .hud-item { text-align:center; }
+  .hud-label { font-size:.65rem; color:#5a7a8a; letter-spacing:2px; text-transform:uppercase; }
+  .hud-val { font-family:'Orbitron',sans-serif; font-size:1.3rem; color:#00f5ff; }
+  .hud-val.lives { color:#ff2d55; font-size:1.1rem; }
+  .hud-val.speed { color:#ffd60a; }
+
+  canvas { display:block; border-left:2px solid rgba(0,245,255,.1); border-right:2px solid rgba(0,245,255,.1); }
+
+  .go-title { font-family:'Orbitron',sans-serif; font-size:3rem; color:#ff2d55; text-shadow:0 0 30px #ff2d55; }
+  .go-score { font-family:'Orbitron',sans-serif; font-size:1.5rem; color:#ffd60a; }
+  .go-best { font-size:1rem; color:#5a7a8a; }
+
+  /* mobile controls */
+  #mobileControls {
+    position:fixed; bottom:20px; left:0; right:0; z-index:50;
+    display:none; justify-content:center; gap:20px;
+  }
+  .mob-btn {
+    width:70px; height:70px; border-radius:50%;
+    background:rgba(0,245,255,.1); border:2px solid rgba(0,245,255,.4);
+    color:#00f5ff; font-size:1.8rem; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; user-select:none; -webkit-user-select:none;
+    transition:background .1s;
+  }
+  .mob-btn:active { background:rgba(0,245,255,.25); }
+  @media(max-width:600px) { #mobileControls { display:flex; } }
+</style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen">
+  <div class="big-car">🏎️</div>
+  <div class="logo">RACE<span>X</span></div>
+  <div class="tagline">ONLINE · FAST · FURIOUS</div>
+  <div class="controls-hint">
+    <strong>⬅ ➡</strong> &nbsp;Arrow Keys / A D — Move Car<br>
+    <strong>⬆</strong> &nbsp;Arrow Up / W — Boost Speed<br>
+    <strong>Avoid</strong> other cars &amp; obstacles!<br>
+    <strong>Collect</strong> ⚡ for turbo boost!
+  </div>
+  <button class="btn-play" onclick="startGame()">🚀 START RACING</button>
+</div>
+
+<!-- GAME OVER SCREEN -->
+<div id="gameOverScreen">
+  <div class="big-car">💥</div>
+  <div class="go-title">GAME OVER</div>
+  <div class="go-score" id="goScore">Score: 0</div>
+  <div class="go-best" id="goBest">Best: 0</div>
+  <button class="btn-play" onclick="restartGame()" style="margin-top:10px">🔄 RACE AGAIN</button>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-item"><div class="hud-label">Score</div><div class="hud-val" id="hudScore">0</div></div>
+  <div class="hud-item"><div class="hud-label">Speed</div><div class="hud-val speed" id="hudSpeed">0 km/h</div></div>
+  <div class="hud-item"><div class="logo" style="font-size:1.2rem">RACE<span>X</span></div></div>
+  <div class="hud-item"><div class="hud-label">Level</div><div class="hud-val" id="hudLevel">1</div></div>
+  <div class="hud-item"><div class="hud-label">Lives</div><div class="hud-val lives" id="hudLives">❤️❤️❤️</div></div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<!-- Mobile Controls -->
+<div id="mobileControls">
+  <div class="mob-btn" id="btnLeft">◀</div>
+  <div class="mob-btn" id="btnBoost">⚡</div>
+  <div class="mob-btn" id="btnRight">▶</div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// canvas size
+canvas.width = Math.min(500, window.innerWidth);
+canvas.height = window.innerHeight;
+
+// ─── GAME STATE ───
+let gameRunning = false;
+let score = 0, bestScore = localStorage.getItem('racex_best') || 0;
+let lives = 3, level = 1, frameCount = 0;
+let gameSpeed = 4, boosting = false, boostTimer = 0;
+let invincible = false, invincTimer = 0;
+
+const keys = {};
+const mobile = { left:false, right:false, boost:false };
+
+// ─── PLAYER CAR ───
+const LANE_COUNT = 3;
+const ROAD_W = canvas.width * 0.6;
+const ROAD_X = (canvas.width - ROAD_W) / 2;
+const LANE_W = ROAD_W / LANE_COUNT;
+
+let player = { lane:1, x:0, y:canvas.height - 130, w:44, h:70, color:'#00f5ff', emoji:'🏎️' };
+function updatePlayerX() { player.x = ROAD_X + player.lane * LANE_W + LANE_W/2 - player.w/2; }
+updatePlayerX();
+
+// ─── OBSTACLES ───
+let obstacles = [];
+const ENEMY_EMOJIS = ['🚗','🚕','🚙','🚌','🚛','🛻'];
+function spawnObstacle() {
+  const lane = Math.floor(Math.random() * LANE_COUNT);
+  obstacles.push({
+    lane, x:0, y:-80, w:44, h:70,
+    speed: gameSpeed + Math.random()*2,
+    emoji: ENEMY_EMOJIS[Math.floor(Math.random()*ENEMY_EMOJIS.length)],
+    type:'car'
+  });
+}
+
+// ─── POWERUPS ───
+let powerups = [];
+function spawnPowerup() {
+  const lane = Math.floor(Math.random() * LANE_COUNT);
+  powerups.push({ lane, x:0, y:-40, w:36, h:36, emoji:'⚡', type:'boost' });
+}
+
+// ─── ROAD MARKINGS ───
+let roadLines = [];
+for(let i=0;i<10;i++) roadLines.push({ y: i*(canvas.height/10) });
+
+// ─── PARTICLES ───
+let particles = [];
+function spawnExplosion(x, y) {
+  for(let i=0;i<12;i++) {
+    particles.push({
+      x, y,
+      vx: (Math.random()-.5)*6,
+      vy: (Math.random()-.5)*6,
+      life: 1, decay: .05 + Math.random()*.05,
+      size: 4+Math.random()*8,
+      color: ['#ff2d55','#ffd60a','#ff6b35'][Math.floor(Math.random()*3)]
+    });
+  }
+}
+
+// ─── SCORE POPUPS ───
+let popups = [];
+function addPopup(txt, x, y, color='#ffd60a') {
+  popups.push({ txt, x, y, life:1, color, vy:-2 });
+}
+
+// ─── DRAW FUNCTIONS ───
+function drawRoad() {
+  // background
+  ctx.fillStyle = '#071020';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // side strips
+  ctx.fillStyle = '#0a1828';
+  ctx.fillRect(0, 0, ROAD_X, canvas.height);
+  ctx.fillRect(ROAD_X + ROAD_W, 0, canvas.width - (ROAD_X+ROAD_W), canvas.height);
+
+  // road surface
+  const grad = ctx.createLinearGradient(ROAD_X, 0, ROAD_X+ROAD_W, 0);
+  grad.addColorStop(0, '#0d1e2e'); grad.addColorStop(.5,'#111c28'); grad.addColorStop(1,'#0d1e2e');
+  ctx.fillStyle = grad;
+  ctx.fillRect(ROAD_X, 0, ROAD_W, canvas.height);
+
+  // road borders
+  ctx.strokeStyle = 'rgba(0,245,255,0.6)';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(ROAD_X,0); ctx.lineTo(ROAD_X,canvas.height); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ROAD_X+ROAD_W,0); ctx.lineTo(ROAD_X+ROAD_W,canvas.height); ctx.stroke();
+
+  // lane dividers
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([40,30]);
+  for(let l=1;l<LANE_COUNT;l++) {
+    const lx = ROAD_X + l * LANE_W;
+    ctx.beginPath(); ctx.moveTo(lx,0); ctx.lineTo(lx,canvas.height); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // moving road lines
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  roadLines.forEach(line => {
+    ctx.fillRect(ROAD_X+10, line.y, ROAD_W-20, 3);
+    line.y += gameSpeed;
+    if(line.y > canvas.height) line.y = -30;
+  });
+
+  // neon glow on road edge
+  ctx.shadowColor = '#00f5ff'; ctx.shadowBlur = 8;
+  ctx.strokeStyle = 'rgba(0,245,255,0.3)'; ctx.lineWidth = 1;
+  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(ROAD_X,0); ctx.lineTo(ROAD_X,canvas.height); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ROAD_X+ROAD_W,0); ctx.lineTo(ROAD_X+ROAD_W,canvas.height); ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+function drawEmoji(emoji, x, y, size) {
+  ctx.font = `${size}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(emoji, x + size/2, y + size/2);
+}
+
+function drawPlayer() {
+  if(invincible && Math.floor(invincTimer*10)%2===0) return; // blink
+
+  // glow
+  ctx.shadowColor = boosting ? '#ffd60a' : '#00f5ff';
+  ctx.shadowBlur = boosting ? 30 : 15;
+  drawEmoji(player.emoji, player.x, player.y, player.w);
+  ctx.shadowBlur = 0;
+
+  if(boosting) {
+    ctx.fillStyle = 'rgba(255,214,10,0.3)';
+    ctx.beginPath();
+    ctx.ellipse(player.x+player.w/2, player.y+player.h, 20, 30, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+
+function drawObstacles() {
+  obstacles.forEach(ob => {
+    ob.x = ROAD_X + ob.lane * LANE_W + LANE_W/2 - ob.w/2;
+    ctx.shadowColor = '#ff2d55'; ctx.shadowBlur = 10;
+    drawEmoji(ob.emoji, ob.x, ob.y, ob.w);
+    ctx.shadowBlur = 0;
+  });
+}
+
+function drawPowerups() {
+  powerups.forEach(pu => {
+    pu.x = ROAD_X + pu.lane * LANE_W + LANE_W/2 - pu.w/2;
+    ctx.shadowColor = '#ffd60a'; ctx.shadowBlur = 15;
+    ctx.font = '28px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(pu.emoji, pu.x+pu.w/2, pu.y+pu.h/2);
+    ctx.shadowBlur = 0;
+  });
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    ctx.fill();
+    p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+  });
+  ctx.globalAlpha = 1;
+  particles = particles.filter(p => p.life > 0);
+}
+
+function drawPopups() {
+  popups.forEach(p => {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.font = "bold 20px 'Orbitron', sans-serif";
+    ctx.textAlign = 'center';
+    ctx.fillText(p.txt, p.x, p.y);
+    p.y += p.vy; p.life -= .03;
+  });
+  ctx.globalAlpha = 1;
+  popups = popups.filter(p => p.life > 0);
+}
+
+function drawBoostBar() {
+  if(!boosting) return;
+  const pct = boostTimer/180;
+  ctx.fillStyle = 'rgba(255,214,10,0.2)';
+  ctx.fillRect(ROAD_X, canvas.height-8, ROAD_W, 8);
+  ctx.fillStyle = '#ffd60a';
+  ctx.fillRect(ROAD_X, canvas.height-8, ROAD_W * pct, 8);
+}
+
+// ─── COLLISION ───
+function rectsOverlap(ax,ay,aw,ah, bx,by,bw,bh) {
+  return ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by;
+}
+
+function checkCollisions() {
+  if(invincible) return;
+  obstacles.forEach((ob, i) => {
+    if(rectsOverlap(player.x+6,player.y+6,player.w-12,player.h-12, ob.x+6,ob.y+6,ob.w-12,ob.h-12)) {
+      spawnExplosion(player.x+player.w/2, player.y+player.h/2);
+      obstacles.splice(i, 1);
+      lives--;
+      invincible = true; invincTimer = 2;
+      updateHUD();
+      if(lives <= 0) endGame();
+    }
+  });
+  powerups.forEach((pu, i) => {
+    if(rectsOverlap(player.x,player.y,player.w,player.h, pu.x,pu.y,pu.w,pu.h)) {
+      powerups.splice(i,1);
+      boosting = true; boostTimer = 180;
+      addPopup('⚡ TURBO!', player.x+player.w/2, player.y, '#ffd60a');
+      score += 50;
+    }
+  });
+}
+
+// ─── INPUT ───
+document.addEventListener('keydown', e => { keys[e.code] = true; e.preventDefault(); });
+document.addEventListener('keyup', e => { keys[e.code] = false; });
+
+let laneTarget = 1;
+let laneCD = 0;
+function handleInput() {
+  if(laneCD > 0) { laneCD--; return; }
+  if((keys['ArrowLeft']||keys['KeyA']||mobile.left) && laneTarget > 0) {
+    laneTarget--; laneCD = 15;
+  }
+  if((keys['ArrowRight']||keys['KeyD']||mobile.right) && laneTarget < LANE_COUNT-1) {
+    laneTarget++; laneCD = 15;
+  }
+  if((keys['ArrowUp']||keys['KeyW']||mobile.boost) && !boosting) {
+    if(score >= 100) { boosting=true; boostTimer=120; score-=100; addPopup('-100 ⚡BOOST', player.x+player.w/2, player.y,'#ffd60a'); }
+  }
+}
+
+// smooth lane transition
+function updatePlayerLane() {
+  const targetX = ROAD_X + laneTarget * LANE_W + LANE_W/2 - player.w/2;
+  player.x += (targetX - player.x) * 0.18;
+  player.lane = laneTarget;
+}
+
+// ─── HUD ───
+function updateHUD() {
+  document.getElementById('hudScore').textContent = score;
+  document.getElementById('hudSpeed').textContent = Math.floor(gameSpeed*30) + ' km/h';
+  document.getElementById('hudLevel').textContent = level;
+  const hearts = ['','❤️','❤️❤️','❤️❤️❤️'];
+  document.getElementById('hudLives').textContent = hearts[Math.max(0,lives)] || '💀';
+}
+
+// ─── GAME LOOP ───
+function gameLoop() {
+  if(!gameRunning) return;
+  frameCount++;
+
+  handleInput();
+  updatePlayerLane();
+
+  // boost
+  if(boosting) {
+    boostTimer--;
+    if(boostTimer<=0) boosting=false;
+  }
+  if(invincible) {
+    invincTimer -= 1/60;
+    if(invincTimer<=0) invincible=false;
+  }
+
+  // speed & level up
+  const spd = boosting ? gameSpeed*1.8 : gameSpeed;
+  if(frameCount % 600 === 0) {
+    level++;
+    gameSpeed = Math.min(4 + level*0.8, 14);
+    addPopup('LEVEL '+level+'!', canvas.width/2, canvas.height/2,'#00f5ff');
+  }
+
+  // spawn obstacles
+  const spawnRate = Math.max(40, 90 - level*6);
+  if(frameCount % spawnRate === 0) spawnObstacle();
+
+  // spawn powerup occasionally
+  if(frameCount % 300 === 0) spawnPowerup();
+
+  // move obstacles
+  obstacles.forEach(ob => { ob.y += ob.speed * (boosting?1.8:1); });
+  obstacles = obstacles.filter(ob => ob.y < canvas.height + 100);
+
+  powerups.forEach(pu => { pu.y += spd * .7; });
+  powerups = powerups.filter(pu => pu.y < canvas.height + 50);
+
+  // score
+  if(frameCount % 10 === 0) { score++; }
+
+  checkCollisions();
+  updateHUD();
+
+  // DRAW
+  drawRoad();
+  drawObstacles();
+  drawPowerups();
+  drawPlayer();
+  drawParticles();
+  drawPopups();
+  drawBoostBar();
+
+  requestAnimationFrame(gameLoop);
+}
+
+// ─── START / END ───
+function startGame() {
+  document.getElementById('startScreen').style.display = 'none';
+  gameRunning = true;
+  gameLoop();
+}
+
+function restartGame() {
+  obstacles=[]; powerups=[]; particles=[]; popups=[];
+  score=0; lives=3; level=1; frameCount=0;
+  gameSpeed=4; boosting=false; boostTimer=0;
+  invincible=false; invincTimer=0;
+  laneTarget=1; laneCD=0;
+  updatePlayerX();
+  document.getElementById('gameOverScreen').style.display='none';
+  gameRunning=true;
+  gameLoop();
+}
+
+function endGame() {
+  gameRunning=false;
+  if(score>bestScore) { bestScore=score; localStorage.setItem('racex_best', bestScore); }
+  document.getElementById('goScore').textContent = 'Score: '+score;
+  document.getElementById('goBest').textContent = 'Best: '+bestScore;
+  document.getElementById('gameOverScreen').style.display='flex';
+}
+
+// ─── MOBILE BUTTONS ───
+const btnL=document.getElementById('btnLeft'), btnR=document.getElementById('btnRight'), btnB=document.getElementById('btnBoost');
+btnL.addEventListener('touchstart',e=>{mobile.left=true;e.preventDefault();},{passive:false});
+btnL.addEventListener('touchend',()=>mobile.left=false);
+btnR.addEventListener('touchstart',e=>{mobile.right=true;e.preventDefault();},{passive:false});
+btnR.addEventListener('touchend',()=>mobile.right=false);
+btnB.addEventListener('touchstart',e=>{mobile.boost=true;e.preventDefault();},{passive:false});
+btnB.addEventListener('touchend',()=>mobile.boost=false);
+
+// resize
+window.addEventListener('resize',()=>{
+  canvas.width=Math.min(500,window.innerWidth);
+  canvas.height=window.innerHeight;
+});
+</script>
+</body>
+</html>
