@@ -1,46 +1,62 @@
-🏎️ RaceX — 3D Edition
-<div align="center"> <img src="https://img.shields.io/badge/Game-Racing-blue?style=for-the-badge&logo=gamejolt"> <img src="https://img.shields.io/badge/HTML5-Canvas-orange?style=for-the-badge&logo=html5"> <img src="https://img.shields.io/badge/JavaScript-ES6-yellow?style=for-the-badge&logo=javascript"> <img src="https://img.shields.io/badge/Responsive-Mobile-green?style=for-the-badge&logo=android">
+🏎️ RaceX 3D — Neon Racing Game
+<div align="center"> <img src="https://img.shields.io/badge/HTML5-Game-orange?style=for-the-badge&logo=html5"> <img src="https://img.shields.io/badge/JavaScript-Canvas-yellow?style=for-the-badge&logo=javascript"> <img src="https://img.shields.io/badge/CSS3-Styled-blue?style=for-the-badge&logo=css3"> <img src="https://img.shields.io/badge/Status-Live-success?style=for-the-badge">
 
 <br><br>
 
-🚀 RACEX 3D
-High Speed Neon Racing Experience
+⚡ RACEX 3D ⚡
+🚀 Futuristic Endless Racing Experience
 
-✨ Fast-paced arcade racing game built with HTML, CSS & JavaScript using the Canvas API.
+A high-speed neon themed racing game built using pure HTML, CSS and JavaScript.
+
+<br>
+
+🎮 Play Now:
+👉 https://mauryashivi199-ui.github.io/game/
 
 </div>
-🎮 Gameplay Preview
-🏎️ Dodge enemy cars
-⚡ Collect boosts
-🔥 Increase speed over time
-💥 Avoid crashes
-🏆 Score as high as possible
-✨ Features
-🌌 Stunning Visuals
-Neon cyberpunk theme
-Pseudo 3D road perspective
-Dynamic sky & mountains
-Smooth car animations
-Glow effects & shadows
-🎮 Gameplay Mechanics
-3 lane racing system
-Speed boost powerups ⚡
-Progressive difficulty scaling
-Collision detection
-Real-time score tracking
-📱 Responsive Controls
-Desktop
+🌌 About The Game
+
+RaceX 3D is a browser-based endless racing game where players dodge enemy cars, collect boosts, and survive at increasing speeds.
+
+The game features:
+
+✨ Neon Cyberpunk UI
+🏎️ Smooth Car Movement
+⚡ Nitro Boost System
+🎵 Background Music & Sound Effects
+📱 Mobile Swipe Support
+🔥 Dynamic Speed Progression
+
+🎮 Controls
+💻 Desktop Controls
 Key	Action
-⬅️ / A	Move Left
-➡️ / D	Move Right
-SPACE / W	Boost
-Mobile
-👆 Swipe Left → Move Left
-👉 Swipe Right → Move Right
-🛠️ Technologies Used
+⬅️ A / Left Arrow	Move Left
+➡️ D / Right Arrow	Move Right
+🚀 W / Space	Activate Boost
+📱 Mobile Controls
+Swipe Left  → Move Left
+Swipe Right → Move Right
+✨ Features
+🚗 Gameplay
+Endless racing mode
+Real-time score system
+Lives system
+Increasing difficulty
+Smooth animations
+🌈 Visual Effects
+Neon glow effects
+3D road illusion
+Animated environment
+Dynamic shadows
+Futuristic HUD
+🔊 Audio
+Background racing music
+Crash sound effects
+Boost activation sounds
+🛠️ Built With
 HTML5
 CSS3
-JavaScript (ES6)
+JavaScript ES6
 Canvas API
 Audio API
 📂 Project Structure
@@ -49,60 +65,58 @@ RaceX-3D/
 ├── index.html
 ├── README.md
 └── assets/
-    ├── music/
-    └── sounds/
-🚀 How To Run
-1️⃣ Clone Repository
-git clone https://github.com/your-username/racex-3d.git
-2️⃣ Open Project
-cd racex-3d
-3️⃣ Run Game
+    ├── audio/
+    └── images/
+🚀 Installation
+Clone Repository
+git clone https://github.com/mauryashivi199-ui/game.git
+Open Folder
+cd game
+Run The Game
 
-Simply open:
+Open:
 
 index.html
 
 in your browser 🌐
 
-🎯 Game Features Breakdown
-Feature	Status
-3D Road Effect	✅
-Enemy Cars	✅
-Boost System	✅
-Mobile Support	✅
-Background Music	✅
-Collision Detection	✅
-Responsive UI	✅
+🏆 Gameplay Preview
+<div align="center">
+🏎️ Dodge Cars
+⚡ Collect Boosts
+🔥 Increase Speed
+💥 Avoid Crashes
+🏆 Beat High Scores
+</div>
 📸 Screenshots
-🏎️ Main Menu
-🚀 START RACING
-Enter Racer Name
-Cyberpunk UI
-⚡ In-Game
-Speed Counter
+🔥 Start Screen
+Neon UI
+Racer Name Input
+Animated Start Button
+🏎️ In-Game HUD
+Score Counter
+Speed Meter
 Lives System
-Real-time HUD
 Boost Effects
-🌟 Future Improvements
-🏆 Leaderboard System
-🌍 Multiplayer Mode
-🚗 More Car Designs
-🌧️ Weather Effects
-🎵 Custom Music
-🛣️ Endless Map Generation
-💖 Developer
+🌟 Future Updates
+🏁 Multiplayer Mode
+🌦️ Weather Effects
+🚘 More Cars
+🌍 Online Leaderboard
+🎨 Car Customization
+🛣️ More Tracks
+👩‍💻 Developer
+Made with ❤️ by Shivi Maurya
+⭐ Support The Project
 
-Made with ❤️ by Your Name
+If you enjoyed this game:
 
-⭐ Support
-
-If you like this project:
-
-🌟 Star the repository
+🌟 Star this repository
 🍴 Fork the project
 🐛 Report bugs
-💡 Suggest features
+💡 Suggest new features
 
 <div align="center">
 🔥 READY TO RACE? 🔥
-🏎️ Start Your Engine & Break The Speed Limit 🏎️
+🏎️ Push The Limits Of Speed 🏎️
+</div>
