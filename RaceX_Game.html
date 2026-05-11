@@ -155,58 +155,90 @@ function popup(t,x,y,c='#ffd60a'){popups.push({txt:t,x,y,life:1,col:c,vy:-2.5});
 
 // ── DRAW ROAD ──
 function drawRoad(){
-  const bg=ctx.createLinearGradient(0,0,0,canvas.height);
-  bg.addColorStop(0,'#010609');bg.addColorStop(1,'#071525');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,canvas.width,canvas.height);
+  // sky blue day
+  const sky=ctx.createLinearGradient(0,0,0,canvas.height*.55);
+  sky.addColorStop(0,'#5ba8e0');sky.addColorStop(.6,'#8ecfef');sky.addColorStop(1,'#c2e8f5');
+  ctx.fillStyle=sky;ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  // side verge green
-  ctx.fillStyle='#0b1d14';
+  // clouds
+  ctx.fillStyle='rgba(255,255,255,0.88)';
+  [[0.25,55,50,18],[0.6,35,38,14],[0.8,65,45,17]].forEach(([rx,ry,rw,rh])=>{
+    const cx=(rx*canvas.width+(frame*.15)%canvas.width)%canvas.width;
+    ctx.beginPath();ctx.ellipse(cx,ry,rw,rh,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(cx+rw*.55,ry-rh*.4,rw*.65,rh*.65,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(cx-rw*.45,ry-rh*.3,rw*.5,rh*.5,0,0,Math.PI*2);ctx.fill();
+  });
+
+  // ground
+  const gr=ctx.createLinearGradient(0,canvas.height*.48,0,canvas.height);
+  gr.addColorStop(0,'#5db83f');gr.addColorStop(.4,'#4a9230');gr.addColorStop(1,'#356820');
+  ctx.fillStyle=gr;ctx.fillRect(0,canvas.height*.48,canvas.width,canvas.height);
+
+  // side grass
+  ctx.fillStyle='#52b038';
   ctx.fillRect(0,0,ROAD_X,canvas.height);
   ctx.fillRect(ROAD_X+ROAD_W,0,canvas.width-(ROAD_X+ROAD_W),canvas.height);
 
   // moving trees
-  ctx.fillStyle='rgba(0,180,60,.14)';
   for(let i=0;i<8;i++){
-    const yp=(i*110+(frame*gameSpeed*.4)%110);
-    ctx.beginPath();ctx.arc(ROAD_X-22,yp,13,0,Math.PI*2);ctx.fill();
-    ctx.fillRect(ROAD_X-26,yp,7,38);
-    ctx.beginPath();ctx.arc(ROAD_X+ROAD_W+22,yp+55,13,0,Math.PI*2);ctx.fill();
-    ctx.fillRect(ROAD_X+ROAD_W+19,yp+55,7,38);
+    const yp=(i*130+(frame*gameSpeed*.5)%130);
+    ctx.fillStyle='#7a4f2a';ctx.fillRect(ROAD_X-18,yp+22,7,36);
+    ctx.fillStyle='#2a8024';ctx.beginPath();ctx.arc(ROAD_X-15,yp+16,17,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#38a030';ctx.beginPath();ctx.arc(ROAD_X-15,yp+8,12,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#7a4f2a';ctx.fillRect(ROAD_X+ROAD_W+13,yp+56,7,36);
+    ctx.fillStyle='#2a8024';ctx.beginPath();ctx.arc(ROAD_X+ROAD_W+17,yp+50,17,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#38a030';ctx.beginPath();ctx.arc(ROAD_X+ROAD_W+17,yp+40,12,0,Math.PI*2);ctx.fill();
   }
 
-  // road — lighter for car contrast
+  // road asphalt
   const rg=ctx.createLinearGradient(ROAD_X,0,ROAD_X+ROAD_W,0);
-  rg.addColorStop(0,'#1c3040');rg.addColorStop(.5,'#243848');rg.addColorStop(1,'#1c3040');
+  rg.addColorStop(0,'#686868');rg.addColorStop(.5,'#767676');rg.addColorStop(1,'#686868');
   ctx.fillStyle=rg;ctx.fillRect(ROAD_X,0,ROAD_W,canvas.height);
 
-  // neon borders
-  ctx.save();ctx.shadowColor='#00f5ff';ctx.shadowBlur=22;
-  ctx.strokeStyle='rgba(0,245,255,.9)';ctx.lineWidth=3;ctx.setLineDash([]);
+  // white edge lines
+  ctx.strokeStyle='#ffffff';ctx.lineWidth=5;ctx.setLineDash([]);
+  ctx.shadowColor='rgba(255,255,255,.4)';ctx.shadowBlur=5;
   ctx.beginPath();ctx.moveTo(ROAD_X,0);ctx.lineTo(ROAD_X,canvas.height);ctx.stroke();
   ctx.beginPath();ctx.moveTo(ROAD_X+ROAD_W,0);ctx.lineTo(ROAD_X+ROAD_W,canvas.height);ctx.stroke();
-  ctx.restore();
+  ctx.shadowBlur=0;
 
-  // lane dividers
-  ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=2;ctx.setLineDash([36,24]);
+  // yellow lane dividers
+  ctx.strokeStyle='#ffe033';ctx.lineWidth=3;ctx.setLineDash([40,28]);
   for(let l=1;l<LANES;l++){const lx=ROAD_X+l*LANE_W;ctx.beginPath();ctx.moveTo(lx,0);ctx.lineTo(lx,canvas.height);ctx.stroke();}
   ctx.setLineDash([]);
 
-  // road stripes
-  ctx.fillStyle='rgba(255,255,255,.1)';
-  roadLines.forEach(ln=>{ctx.fillRect(ROAD_X+16,ln.y,ROAD_W-32,5);ln.y+=gameSpeed*(boosting?1.9:1);if(ln.y>canvas.height)ln.y=-28;});
+  // centre white dashes
+  ctx.fillStyle='rgba(255,255,255,0.7)';
+  roadLines.forEach(ln=>{
+    ctx.fillRect(ROAD_X+ROAD_W/2-3,ln.y,6,30);
+    ln.y+=gameSpeed*(boosting?1.9:1);
+    if(ln.y>canvas.height)ln.y=-32;
+  });
 }
 
-// ── DRAW CAR bright ──
+// ── DRAW CAR — bright light theme ──
 function drawCar(emoji,x,y,w,h,glowCol,glowStr){
   ctx.save();
-  // bright halo under car
-  const bg=ctx.createRadialGradient(x+w/2,y+h*.6,2,x+w/2,y+h*.6,w*.65);
-  bg.addColorStop(0,'rgba(255,255,255,0.16)');bg.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=bg;ctx.beginPath();ctx.ellipse(x+w/2,y+h*.6,w*.6,h*.42,0,0,Math.PI*2);ctx.fill();
-  // glow + emoji double draw
-  ctx.shadowColor=glowCol;ctx.shadowBlur=glowStr;
-  ctx.font=`${w+6}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  // big bright white halo — makes car pop on any background
+  const bg=ctx.createRadialGradient(x+w/2,y+h*.55,1,x+w/2,y+h*.55,w*.9);
+  bg.addColorStop(0,'rgba(255,255,255,0.38)');
+  bg.addColorStop(0.5,'rgba(255,255,255,0.12)');
+  bg.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=bg;
+  ctx.beginPath();ctx.ellipse(x+w/2,y+h*.55,w*.85,h*.55,0,0,Math.PI*2);ctx.fill();
+
+  // white base shadow (makes emoji look solid & bright)
+  ctx.shadowColor='rgba(255,255,255,0.9)';
+  ctx.shadowBlur=18;
+  ctx.font=`${w+10}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(emoji,x+w/2,y+h/2);
+
+  // colored glow on top
+  ctx.shadowColor=glowCol;ctx.shadowBlur=glowStr;
+  ctx.font=`${w+6}px serif`;
+  ctx.fillText(emoji,x+w/2,y+h/2);
+
+  // crisp top layer — no shadow
   ctx.shadowBlur=0;
   ctx.font=`${w+2}px serif`;
   ctx.fillText(emoji,x+w/2,y+h/2);
@@ -216,8 +248,8 @@ function drawCar(emoji,x,y,w,h,glowCol,glowStr){
 // ── DRAW PLAYER ──
 function drawPlayer(){
   if(invincible&&Math.floor(invincTimer*14)%2===0)return;
-  const gc=boosting?'#ffd60a':'#ffffff';
-  drawCar(playerEmoji,player.x,player.y,player.w,player.h,gc,boosting?50:36);
+  const gc=boosting?'#ffee00':'#00f5ff';
+  drawCar(playerEmoji,player.x,player.y,player.w,player.h,gc,boosting?60:44);
   // headlights
   ctx.save();ctx.shadowColor=boosting?'#ffd60a':'#fffff0';ctx.shadowBlur=22;
   ctx.fillStyle=boosting?'rgba(255,220,40,1)':'rgba(255,255,210,1)';
@@ -313,12 +345,12 @@ function loop(){
   if(boosting){boostTimer--;if(boostTimer<=0)boosting=false;}
   if(invincible){invincTimer-=1/60;if(invincTimer<=0)invincible=false;}
 
-  // SMOOTH SPEED — tiny increase every second, lerp toward target
-  if(frame%60===0&&targetSpeed<SPD_MAX) targetSpeed=Math.min(SPD_MAX,targetSpeed+0.06);
-  gameSpeed+=(targetSpeed-gameSpeed)*0.003;  // very gentle lerp
+  // ULTRA SMOOTH SPEED — increase every 3 seconds, very gentle lerp
+  if(frame%180===0 && targetSpeed<SPD_MAX) targetSpeed=Math.min(SPD_MAX, targetSpeed+0.04);
+  gameSpeed += (targetSpeed - gameSpeed) * 0.001; // super gentle, no jump
 
-  // level up every 800 frames — no sudden jump
-  if(frame%800===0){level++;targetSpeed=Math.min(SPD_MAX,SPD_START+level*.4);popup('⬆ LEVEL '+level+'!',canvas.width/2,canvas.height/2,'#00f5ff');snd('levelup');}
+  // level up every 1200 frames (~20 sec)
+  if(frame%1200===0){level++; targetSpeed=Math.min(SPD_MAX, SPD_START+level*.35); popup('⬆ LEVEL '+level+'!',canvas.width/2,canvas.height/2,'#22cc22'); snd('levelup');}
 
   const sr=Math.max(42,95-level*6);
   if(frame%sr===0)spawnOb();
@@ -411,47 +443,59 @@ function getAC(){
   return AC;
 }
 
-// deep layered engine
+// F1-style layered engine
 function startEngine(){
   if(!soundOn)return;
   stopEngine();
   const ac=getAC();
+
+  // master gain with ramp up
   engGain=ac.createGain();
   engGain.gain.setValueAtTime(0.001,ac.currentTime);
-  engGain.gain.linearRampToValueAtTime(0.09,ac.currentTime+0.5);
+  engGain.gain.linearRampToValueAtTime(0.11,ac.currentTime+0.6);
   engGain.connect(ac.destination);
 
-  // waveshaper distortion = growl
+  // compressor for punch
+  const comp=ac.createDynamicsCompressor();
+  comp.threshold.value=-18; comp.knee.value=10;
+  comp.ratio.value=4; comp.attack.value=0.003; comp.release.value=0.1;
+  comp.connect(engGain);
+
+  // waveshaper for distortion/growl
   const dist=ac.createWaveShaper();
-  const curve=new Float32Array(256);
-  for(let i=0;i<256;i++){const x=i*2/256-1;curve[i]=x<0?-Math.pow(-x,.65):Math.pow(x,.65);}
-  dist.curve=curve;dist.oversample='4x';dist.connect(engGain);
+  const N=512; const curve=new Float32Array(N);
+  for(let i=0;i<N;i++){const x=i*2/N-1; curve[i]=(Math.PI+280)*x/(Math.PI+280*Math.abs(x));}
+  dist.curve=curve; dist.oversample='4x';
+  dist.connect(comp);
 
-  // osc1: deep sawtooth — cylinder rumble
-  const o1=ac.createOscillator();o1.type='sawtooth';o1.frequency.value=55;
-  const g1=ac.createGain();g1.gain.value=0.65;o1.connect(g1);g1.connect(dist);o1.start();
+  // osc1: fundamental — deep cylinder thump
+  const o1=ac.createOscillator(); o1.type='sawtooth'; o1.frequency.value=60;
+  const g1=ac.createGain(); g1.gain.value=0.7; o1.connect(g1); g1.connect(dist); o1.start();
 
-  // osc2: square — mid harmonic
-  const o2=ac.createOscillator();o2.type='square';o2.frequency.value=110;
-  const g2=ac.createGain();g2.gain.value=0.28;o2.connect(g2);g2.connect(dist);o2.start();
+  // osc2: 2nd harmonic — mid growl
+  const o2=ac.createOscillator(); o2.type='sawtooth'; o2.frequency.value=120;
+  const g2=ac.createGain(); g2.gain.value=0.35; o2.connect(g2); g2.connect(dist); o2.start();
 
-  // osc3: high sawtooth — valve whine
-  const o3=ac.createOscillator();o3.type='sawtooth';o3.frequency.value=220;
-  const g3=ac.createGain();g3.gain.value=0.12;o3.connect(g3);g3.connect(dist);o3.start();
+  // osc3: high harmonic — turbo whine
+  const o3=ac.createOscillator(); o3.type='triangle'; o3.frequency.value=380;
+  const g3=ac.createGain(); g3.gain.value=0.1; o3.connect(g3); g3.connect(comp); o3.start();
 
-  // noise: exhaust hiss
-  const bufSz=ac.sampleRate*.5;
+  // exhaust noise burst
+  const bufSz=ac.sampleRate*1.5;
   const buf=ac.createBuffer(1,bufSz,ac.sampleRate);
-  const d=buf.getChannelData(0);for(let i=0;i<bufSz;i++)d[i]=Math.random()*2-1;
-  const noise=ac.createBufferSource();noise.buffer=buf;noise.loop=true;
-  const nf=ac.createBiquadFilter();nf.type='bandpass';nf.frequency.value=1100;nf.Q.value=0.4;
-  const ng=ac.createGain();ng.gain.value=0.05;
-  noise.connect(nf);nf.connect(ng);ng.connect(engGain);noise.start();
+  const nd=buf.getChannelData(0);
+  for(let i=0;i<bufSz;i++) nd[i]=Math.random()*2-1;
+  const noise=ac.createBufferSource(); noise.buffer=buf; noise.loop=true;
+  const nfLo=ac.createBiquadFilter(); nfLo.type='lowpass'; nfLo.frequency.value=320;
+  const nfHi=ac.createBiquadFilter(); nfHi.type='highpass'; nfHi.frequency.value=80;
+  const ng=ac.createGain(); ng.gain.value=0.07;
+  noise.connect(nfHi); nfHi.connect(nfLo); nfLo.connect(ng); ng.connect(comp); noise.start();
 
-  // LFO: RPM wobble
-  engLFO=ac.createOscillator();engLFO.type='sine';engLFO.frequency.value=7;
-  const lfoG=ac.createGain();lfoG.gain.value=9;
-  engLFO.connect(lfoG);lfoG.connect(o1.frequency);lfoG.connect(o2.frequency);
+  // RPM wobble LFO
+  engLFO=ac.createOscillator(); engLFO.type='sine'; engLFO.frequency.value=8;
+  const lfoG=ac.createGain(); lfoG.gain.value=11;
+  engLFO.connect(lfoG);
+  lfoG.connect(o1.frequency); lfoG.connect(o2.frequency);
   engLFO.start();
 
   engOscs=[o1,o2,o3,noise,engLFO];
@@ -466,13 +510,15 @@ function stopEngine(){
 function updateEngineSnd(){
   if(!engOscs.length||!engGain||!soundOn)return;
   const ac=getAC();
-  const spd=boosting?gameSpeed*1.8:gameSpeed;
-  const base=55+spd*17;
-  engOscs[0].frequency.setTargetAtTime(base,ac.currentTime,0.06);
-  engOscs[1].frequency.setTargetAtTime(base*2,ac.currentTime,0.06);
-  engOscs[2].frequency.setTargetAtTime(base*4,ac.currentTime,0.06);
-  if(engLFO)engLFO.frequency.setTargetAtTime(5+spd*0.9,ac.currentTime,0.08);
-  engGain.gain.setTargetAtTime(boosting?0.16:0.09,ac.currentTime,0.08);
+  const spd=boosting?gameSpeed*2.2:gameSpeed;
+  const base=60+spd*20;           // deeper starting pitch
+  const tc=boosting?0.02:0.08;    // fast response on boost
+  engOscs[0].frequency.setTargetAtTime(base,      ac.currentTime,tc);
+  engOscs[1].frequency.setTargetAtTime(base*2,    ac.currentTime,tc);
+  engOscs[2].frequency.setTargetAtTime(base*6+40, ac.currentTime,tc); // turbo whine rises fast
+  if(engLFO) engLFO.frequency.setTargetAtTime(6+spd*1.1, ac.currentTime,0.06);
+  const vol=boosting?0.18:0.11;
+  engGain.gain.setTargetAtTime(vol, ac.currentTime,0.05);
 }
 
 // one-shot sounds
