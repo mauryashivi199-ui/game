@@ -59,6 +59,7 @@ CSS3
 JavaScript ES6
 Canvas API
 Audio API
+<br>
 📂 Project Structure
 RaceX-3D/
 │
@@ -67,6 +68,7 @@ RaceX-3D/
 └── assets/
     ├── audio/
     └── images/
+    </br>
 🚀 Installation
 Clone Repository
 git clone https://github.com/mauryashivi199-ui/game.git
