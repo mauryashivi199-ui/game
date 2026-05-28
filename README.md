@@ -39,7 +39,7 @@ Swipe Right → Move Right
 ✨ Features
 🚗 Gameplay
 Endless racing mode
-Real-time score system
+Real-time score system in website 
 Lives system
 Increasing difficulty
 Smooth animations
