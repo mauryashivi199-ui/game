@@ -117,6 +117,31 @@
 
 <script>
 const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+  // ── REAL WEATHER API ──
+let isRaining = false;
+let rainDrops = [];
+
+async function fetchWeather() {
+  try {
+    // Delhi/Noida coordinates — apni city ke hisaab se badal sakti ho
+    const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=28.6&longitude=77.2&current_weather=true");
+    const data = await res.json();
+    const code = data.current_weather.weathercode;
+
+    // weather codes: 51-67 aur 80-99 matlab rain/drizzle/storm
+    isRaining = (code >= 51 && code <= 67) || (code >= 80 && code <= 99);
+
+    if (isRaining) {
+      for (let i = 0; i < 100; i++) {
+        rainDrops.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, speed: 8 + Math.random() * 6 });
+      }
+    }
+    console.log("Real weather code:", code, "Raining:", isRaining);
+  } catch (e) {
+    console.log("Weather fetch failed, using default clear weather", e);
+  }
+}
+fetchWeather();
 function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
 resize();
 window.addEventListener('resize',()=>{resize();calcRoad();resetPos();initLines();});
@@ -152,7 +177,22 @@ function spawnOb(){const l=Math.floor(Math.random()*LANES);obstacles.push({lane:
 function spawnPu(){powerups.push({lane:Math.floor(Math.random()*LANES),y:-42,w:36,h:36,emoji:'⚡'});}
 function explode(x,y){for(let i=0;i<16;i++)particles.push({x,y,vx:(Math.random()-.5)*10,vy:(Math.random()-.5)*10,life:1,decay:.035+Math.random()*.04,size:4+Math.random()*10,color:['#ff2d55','#ffd60a','#ff6b35','#fff','#ffaaaa'][Math.floor(Math.random()*5)]});}
 function popup(t,x,y,c='#ffd60a'){popups.push({txt:t,x,y,life:1,col:c,vy:-2.5});}
-
+function drawRain(){
+  if(!isRaining) return;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(174,194,224,0.55)';
+  ctx.lineWidth = 1.5;
+  rainDrops.forEach(d => {
+    ctx.beginPath();
+    ctx.moveTo(d.x, d.y);
+    ctx.lineTo(d.x - 3, d.y + 16);
+    ctx.stroke();
+    d.y += d.speed;
+    d.x -= 1.5;
+    if (d.y > canvas.height) { d.y = -20; d.x = Math.random() * canvas.width; }
+  });
+  ctx.restore();
+}
 // ── DRAW ROAD ──
 function drawRoad(){
   // sky blue day
@@ -192,7 +232,11 @@ function drawRoad(){
 
   // road asphalt
   const rg=ctx.createLinearGradient(ROAD_X,0,ROAD_X+ROAD_W,0);
-  rg.addColorStop(0,'#686868');rg.addColorStop(.5,'#767676');rg.addColorStop(1,'#686868');
+  if(isRaining){
+    rg.addColorStop(0,'#3a3a3a');rg.addColorStop(.5,'#454545');rg.addColorStop(1,'#3a3a3a');
+  } else {
+    rg.addColorStop(0,'#686868');rg.addColorStop(.5,'#767676');rg.addColorStop(1,'#686868');
+  }
   ctx.fillStyle=rg;ctx.fillRect(ROAD_X,0,ROAD_W,canvas.height);
 
   // white edge lines
@@ -363,7 +407,7 @@ function loop(){
   powerups=powerups.filter(pu=>pu.y<canvas.height+60);
 
   checkHits();updateHUD();updateEngineSnd();
-  drawRoad();drawObstacles();drawPowerups();drawPlayer();drawFX();
+ drawRoad();drawRain();drawObstacles();drawPowerups();drawPlayer();drawFX();
   requestAnimationFrame(loop);
 }
 
