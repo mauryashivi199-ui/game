@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RaceX 3D — Real Supercar Racing & Custom Tuning</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#060a10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>RaceX 3D — Real Supercar Racing & Multiplayer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Three.js 3D Engine -->
@@ -22,8 +25,8 @@
     --diamond: #38bdf8;
     --green: #00ff88;
     --dark: #060a10;
-    --card: rgba(10, 18, 30, 0.94);
-    --border: rgba(0, 245, 255, 0.28);
+    --card: rgba(10, 18, 30, 0.95);
+    --border: rgba(0, 245, 255, 0.3);
     --font-head: 'Orbitron', sans-serif;
     --font-body: 'Rajdhani', sans-serif;
   }
@@ -34,15 +37,18 @@
     box-sizing: border-box;
     user-select: none;
     -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
   }
 
-  body {
+  html, body {
     background: var(--dark);
     font-family: var(--font-body);
     color: #f1f5f9;
     overflow: hidden;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+    position: fixed;
   }
 
   #webgl-canvas {
@@ -53,6 +59,7 @@
     height: 100%;
     z-index: 1;
     display: block;
+    touch-action: none;
   }
 
   /* Screens & Modals */
@@ -60,14 +67,15 @@
     position: fixed;
     inset: 0;
     z-index: 100;
-    background: radial-gradient(circle at center, rgba(14, 25, 42, 0.94) 0%, rgba(4, 7, 14, 0.98) 100%);
+    background: radial-gradient(circle at center, rgba(14, 25, 42, 0.96) 0%, rgba(4, 7, 14, 0.98) 100%);
     backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.35s ease, visibility 0.35s;
-    padding: 20px;
+    transition: opacity 0.3s ease, visibility 0.3s;
+    padding: clamp(10px, 3vw, 24px);
     overflow-y: auto;
   }
   .screen.hide {
@@ -79,56 +87,60 @@
   /* Header & Logo */
   .title-logo {
     font-family: var(--font-head);
-    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-size: clamp(1.8rem, 7vw, 3.8rem);
     font-weight: 900;
-    letter-spacing: 6px;
+    letter-spacing: clamp(2px, 1.2vw, 6px);
     color: #fff;
-    text-shadow: 0 0 30px var(--neon), 0 0 60px rgba(0, 245, 255, 0.4);
+    text-shadow: 0 0 25px var(--neon), 0 0 50px rgba(0, 245, 255, 0.4);
     margin-bottom: 2px;
     text-align: center;
+    line-height: 1.1;
   }
-  .title-logo span { color: var(--hot); text-shadow: 0 0 30px var(--hot); }
+  .title-logo span { color: var(--hot); text-shadow: 0 0 25px var(--hot); }
   .subtitle {
     font-family: var(--font-head);
-    font-size: 0.85rem;
-    letter-spacing: 4px;
+    font-size: clamp(0.65rem, 2vw, 0.82rem);
+    letter-spacing: clamp(1px, 0.6vw, 3px);
     color: var(--neon);
     text-transform: uppercase;
-    margin-bottom: 18px;
+    margin-bottom: 12px;
     opacity: 0.9;
+    text-align: center;
   }
 
   /* Glass Card Panels */
   .glass-card {
     background: var(--card);
     border: 1px solid var(--border);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 0 25px rgba(0, 245, 255, 0.05);
-    border-radius: 18px;
-    padding: 24px;
-    max-width: 880px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(0, 245, 255, 0.05);
+    border-radius: 16px;
+    padding: clamp(14px, 3vw, 24px);
+    max-width: 840px;
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: clamp(10px, 2vw, 14px);
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   /* Multi-Currency Economy Bar */
   .currency-bar {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     flex-wrap: wrap;
     justify-content: flex-end;
   }
   .currency-pill {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     font-family: var(--font-head);
-    font-size: 0.9rem;
+    font-size: clamp(0.72rem, 2vw, 0.85rem);
     font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 20px;
+    padding: 3px 8px;
+    border-radius: 16px;
     background: rgba(0,0,0,0.5);
     border: 1px solid rgba(255,255,255,0.15);
   }
@@ -144,26 +156,27 @@
     justify-content: space-between;
     background: linear-gradient(135deg, rgba(0, 245, 255, 0.1) 0%, rgba(176, 38, 255, 0.1) 100%);
     border: 1px solid rgba(0, 245, 255, 0.35);
-    border-radius: 14px;
-    padding: 12px 20px;
+    border-radius: 12px;
+    padding: clamp(8px, 2vw, 12px) clamp(10px, 2.5vw, 16px);
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
   }
   .profile-info {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
   }
   .photo-avatar-wrap {
     position: relative;
-    width: 58px;
-    height: 58px;
+    width: clamp(44px, 11vw, 54px);
+    height: clamp(44px, 11vw, 54px);
     border-radius: 50%;
     border: 2px solid var(--neon);
-    box-shadow: 0 0 20px rgba(0, 245, 255, 0.6);
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.6);
     overflow: hidden;
     cursor: pointer;
     background: #000;
+    flex-shrink: 0;
   }
   .photo-avatar-img {
     width: 100%;
@@ -172,21 +185,22 @@
   }
   .player-name-text {
     font-family: var(--font-head);
-    font-size: 1.25rem;
+    font-size: clamp(1rem, 3.2vw, 1.2rem);
     font-weight: 800;
     color: #fff;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
   }
   .player-id-tag {
     font-family: var(--font-head);
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     color: var(--neon);
     letter-spacing: 1px;
   }
   .player-rank-badge {
-    font-size: 0.82rem;
+    font-size: clamp(0.72rem, 2vw, 0.8rem);
     color: var(--gold);
     font-weight: 700;
     letter-spacing: 1px;
@@ -195,125 +209,113 @@
   /* Game Modes Grid */
   .modes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
   }
   .mode-card {
     background: rgba(5, 12, 22, 0.75);
     border: 1px solid rgba(0, 245, 255, 0.2);
-    border-radius: 14px;
-    padding: 18px;
+    border-radius: 12px;
+    padding: clamp(12px, 2vw, 16px);
     text-align: center;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
-  .mode-card:hover {
+  .mode-card:hover, .mode-card:active {
     border-color: var(--neon);
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(0, 245, 255, 0.25);
-    background: rgba(0, 245, 255, 0.1);
+    background: rgba(0, 245, 255, 0.12);
+    transform: translateY(-2px);
   }
-  .mode-icon { font-size: 2.3rem; }
-  .mode-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 800; color: #fff; }
-  .mode-desc { font-size: 0.85rem; color: #94a3b8; line-height: 1.3; }
+  .mode-icon { font-size: clamp(1.8rem, 5vw, 2.2rem); }
+  .mode-title { font-family: var(--font-head); font-size: clamp(0.92rem, 2.8vw, 1.05rem); font-weight: 800; color: #fff; }
+  .mode-desc { font-size: clamp(0.75rem, 2.2vw, 0.82rem); color: #94a3b8; line-height: 1.3; }
 
   /* Buttons */
   .btn-main {
     font-family: var(--font-head);
-    font-size: 0.92rem;
+    font-size: clamp(0.78rem, 2.4vw, 0.9rem);
     font-weight: 800;
-    letter-spacing: 2px;
-    padding: 14px 24px;
-    border-radius: 10px;
+    letter-spacing: 1.5px;
+    padding: clamp(10px, 2.5vw, 13px) clamp(16px, 3vw, 22px);
+    border-radius: 8px;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     text-transform: uppercase;
+    touch-action: manipulation;
   }
-  .btn-hot { background: linear-gradient(135deg, var(--hot) 0%, #ff6b35 100%); color: #fff; box-shadow: 0 0 25px rgba(255, 45, 85, 0.4); }
-  .btn-hot:hover { transform: scale(1.03); box-shadow: 0 0 35px rgba(255, 45, 85, 0.7); }
-  .btn-neon { background: linear-gradient(135deg, #00f5ff 0%, #0099ff 100%); color: #050a0e; box-shadow: 0 0 25px rgba(0, 245, 255, 0.4); }
-  .btn-neon:hover { transform: scale(1.03); box-shadow: 0 0 35px rgba(0, 245, 255, 0.8); }
-  .btn-purple { background: linear-gradient(135deg, #b026ff 0%, #ff2d55 100%); color: #fff; box-shadow: 0 0 25px rgba(176, 38, 255, 0.4); }
-  .btn-purple:hover { transform: scale(1.03); box-shadow: 0 0 35px rgba(176, 38, 255, 0.7); }
+  .btn-hot { background: linear-gradient(135deg, var(--hot) 0%, #ff6b35 100%); color: #fff; box-shadow: 0 0 20px rgba(255, 45, 85, 0.4); }
+  .btn-hot:active { transform: scale(0.97); }
+  .btn-neon { background: linear-gradient(135deg, #00f5ff 0%, #0099ff 100%); color: #050a0e; box-shadow: 0 0 20px rgba(0, 245, 255, 0.4); }
+  .btn-neon:active { transform: scale(0.97); }
+  .btn-purple { background: linear-gradient(135deg, #b026ff 0%, #ff2d55 100%); color: #fff; box-shadow: 0 0 20px rgba(176, 38, 255, 0.4); }
+  .btn-purple:active { transform: scale(0.97); }
   .btn-outline { background: transparent; border: 1px solid var(--neon); color: var(--neon); }
-  .btn-outline:hover { background: rgba(0, 245, 255, 0.12); transform: scale(1.02); }
+  .btn-outline:active { background: rgba(0, 245, 255, 0.15); transform: scale(0.97); }
 
   /* Input fields */
   .cyber-input {
     background: rgba(5, 10, 18, 0.85);
     border: 1px solid rgba(0, 245, 255, 0.35);
     border-radius: 8px;
-    padding: 12px 18px;
+    padding: 10px 14px;
     color: #fff;
     font-family: var(--font-body);
-    font-size: 1.1rem;
+    font-size: 1rem;
     outline: none;
     width: 100%;
   }
-  .cyber-input:focus {
-    border-color: var(--neon);
-    box-shadow: 0 0 15px rgba(0, 245, 255, 0.35);
-  }
+  .cyber-input:focus { border-color: var(--neon); box-shadow: 0 0 12px rgba(0, 245, 255, 0.35); }
 
-  /* Garage & Customizer Tabs */
+  /* Garage & Customizer */
   .garage-tabs {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     border-bottom: 1px solid rgba(0, 245, 255, 0.2);
-    padding-bottom: 8px;
+    padding-bottom: 6px;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .garage-tab-btn {
     background: rgba(0,0,0,0.5);
     border: 1px solid rgba(0,245,255,0.2);
     color: #94a3b8;
-    padding: 8px 16px;
-    border-radius: 8px;
+    padding: 6px 12px;
+    border-radius: 6px;
     font-family: var(--font-head);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     cursor: pointer;
+    white-space: nowrap;
   }
-  .garage-tab-btn.active {
-    color: var(--neon);
-    border-color: var(--neon);
-    background: rgba(0,245,255,0.15);
-  }
+  .garage-tab-btn.active { color: var(--neon); border-color: var(--neon); background: rgba(0,245,255,0.15); }
 
   .car-selector {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-    margin: 10px 0;
+    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    gap: 8px;
+    margin: 8px 0;
   }
   .car-card {
     background: rgba(0,0,0,0.6);
     border: 2px solid rgba(0,245,255,0.2);
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 10px;
+    padding: 8px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s;
   }
-  .car-card.selected {
-    border-color: var(--neon);
-    background: rgba(0, 245, 255, 0.15);
-    box-shadow: 0 0 20px rgba(0, 245, 255, 0.35);
-  }
-  .car-name { font-family: var(--font-head); font-weight: 700; font-size: 0.95rem; color: #fff; margin-top: 4px; }
-  .color-picker-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
-  .color-dot {
-    width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s;
-  }
-  .color-dot:hover, .color-dot.active { transform: scale(1.25); border-color: #fff; box-shadow: 0 0 14px currentColor; }
+  .car-card.selected { border-color: var(--neon); background: rgba(0, 245, 255, 0.15); box-shadow: 0 0 15px rgba(0, 245, 255, 0.35); }
+  .car-name { font-family: var(--font-head); font-weight: 700; font-size: 0.82rem; color: #fff; margin-top: 2px; }
+  .color-picker-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
+  .color-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+  .color-dot:active, .color-dot.active { transform: scale(1.15); border-color: #fff; box-shadow: 0 0 12px currentColor; }
 
   /* In-Game HUD */
   #hud {
@@ -324,66 +326,76 @@
     display: none;
     flex-direction: column;
     justify-content: space-between;
-    padding: 16px 24px;
+    padding: clamp(8px, 2vw, 16px) clamp(10px, 3vw, 24px);
   }
   #hud.active { display: flex; }
 
-  .hud-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .hud-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 6px;
+  }
   .hud-stat-box {
     background: rgba(4, 10, 20, 0.8);
     border: 1px solid rgba(0, 245, 255, 0.3);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    padding: 8px 16px;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 6px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-  .hud-stat-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; }
-  .hud-stat-value { font-family: var(--font-head); font-size: 1.35rem; font-weight: 800; color: #fff; }
+  .hud-stat-title { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; }
+  .hud-stat-value { font-family: var(--font-head); font-size: clamp(1rem, 3.5vw, 1.3rem); font-weight: 800; color: #fff; }
 
   /* Speedometer Cluster */
   .speed-cluster {
     position: absolute;
-    bottom: 24px;
-    right: 28px;
+    bottom: clamp(14px, 4vw, 24px);
+    right: clamp(12px, 3vw, 28px);
     background: radial-gradient(circle, rgba(12, 24, 40, 0.92) 0%, rgba(2, 6, 14, 0.98) 100%);
     border: 2px solid rgba(0, 245, 255, 0.35);
     border-radius: 50%;
-    width: 170px;
-    height: 170px;
+    width: clamp(110px, 24vw, 160px);
+    height: clamp(110px, 24vw, 160px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 35px rgba(0, 245, 255, 0.3), inset 0 0 25px rgba(0, 245, 255, 0.1);
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.3);
   }
-  .speed-num { font-family: var(--font-head); font-size: 2.9rem; font-weight: 900; color: var(--neon); line-height: 1; text-shadow: 0 0 18px var(--neon); }
-  .speed-unit { font-family: var(--font-head); font-size: 0.75rem; color: #94a3b8; letter-spacing: 2px; }
-  .gear-tag { font-family: var(--font-head); font-size: 0.95rem; font-weight: 800; color: var(--gold); margin-top: 4px; }
+  .speed-num { font-family: var(--font-head); font-size: clamp(2rem, 6vw, 2.7rem); font-weight: 900; color: var(--neon); line-height: 1; text-shadow: 0 0 14px var(--neon); }
+  .speed-unit { font-family: var(--font-head); font-size: clamp(0.6rem, 1.8vw, 0.72rem); color: #94a3b8; letter-spacing: 1px; }
+  .gear-tag { font-family: var(--font-head); font-size: clamp(0.75rem, 2.2vw, 0.9rem); font-weight: 800; color: var(--gold); margin-top: 2px; }
   .gear-tag.reverse { color: var(--hot); text-shadow: 0 0 10px var(--hot); }
 
   /* Nitro Gauge */
-  .nitro-gauge-wrap { position: absolute; bottom: 30px; left: 28px; width: 220px; }
-  .nitro-bar-bg { width: 100%; height: 16px; background: rgba(0,0,0,0.7); border: 1px solid rgba(0, 245, 255, 0.3); border-radius: 8px; overflow: hidden; }
-  .nitro-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #00f5ff, #ff2d55); box-shadow: 0 0 15px #00f5ff; transition: width 0.1s linear; }
-  .nitro-label { font-family: var(--font-head); font-size: 0.75rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .nitro-gauge-wrap {
+    position: absolute;
+    bottom: clamp(20px, 4vw, 28px);
+    left: clamp(12px, 3vw, 28px);
+    width: clamp(130px, 30vw, 200px);
+  }
+  .nitro-bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.7); border: 1px solid rgba(0, 245, 255, 0.3); border-radius: 6px; overflow: hidden; }
+  .nitro-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #00f5ff, #ff2d55); box-shadow: 0 0 10px #00f5ff; transition: width 0.1s linear; }
+  .nitro-label { font-family: var(--font-head); font-size: clamp(0.65rem, 1.8vw, 0.72rem); color: var(--neon); letter-spacing: 1px; margin-bottom: 2px; display: flex; justify-content: space-between; }
 
-  /* Radio Station Button */
+  /* Radio Button in HUD */
   .radio-pill {
     position: absolute;
-    bottom: 24px;
+    bottom: clamp(16px, 3vw, 24px);
     left: 50%;
     transform: translateX(-50%);
     background: rgba(4, 10, 20, 0.85);
     border: 1px solid rgba(0, 245, 255, 0.3);
-    border-radius: 20px;
-    padding: 6px 16px;
+    border-radius: 16px;
+    padding: 4px 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     font-family: var(--font-head);
-    font-size: 0.78rem;
+    font-size: clamp(0.65rem, 2vw, 0.75rem);
     color: var(--neon);
     pointer-events: auto;
     cursor: pointer;
@@ -394,99 +406,159 @@
     background: linear-gradient(135deg, rgba(255, 214, 10, 0.2) 0%, rgba(255, 45, 85, 0.2) 100%);
     border: 1px solid var(--gold);
     color: var(--gold);
-    padding: 4px 12px;
-    border-radius: 8px;
+    padding: 4px 10px;
+    border-radius: 6px;
     font-family: var(--font-head);
-    font-size: 0.85rem;
+    font-size: clamp(0.68rem, 2.2vw, 0.8rem);
     font-weight: 800;
   }
 
-  /* Live Currency collected HUD */
+  /* Live Currency in HUD */
   .hud-currency-live {
     position: absolute;
-    top: 80px;
-    left: 24px;
+    top: clamp(65px, 12vw, 75px);
+    left: clamp(10px, 3vw, 20px);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
   }
+
+  /* Top Right HUD Action Buttons */
   .hud-btns {
     position: fixed;
-    top: 16px;
-    right: 20px;
+    top: clamp(8px, 2vw, 14px);
+    right: clamp(10px, 2.5vw, 18px);
     z-index: 70;
     display: flex;
-    gap: 8px;
+    gap: 6px;
   }
   .hud-btn {
     background: rgba(4, 10, 20, 0.85);
     border: 1px solid rgba(0, 245, 255, 0.3);
     color: var(--neon);
-    border-radius: 8px;
-    padding: 8px 14px;
+    border-radius: 6px;
+    padding: 6px 10px;
     font-family: var(--font-head);
-    font-size: 0.8rem;
+    font-size: clamp(0.68rem, 2vw, 0.76rem);
     cursor: pointer;
-    transition: all 0.2s;
   }
-  .hud-btn:hover { background: rgba(0, 245, 255, 0.2); }
+  .hud-btn:active { background: rgba(0, 245, 255, 0.2); }
 
   /* Big Notification Text */
   #gameNotif {
     position: fixed;
-    top: 28%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 80;
     font-family: var(--font-head);
-    font-size: 3.6rem;
+    font-size: clamp(2.4rem, 8vw, 3.6rem);
     font-weight: 900;
     color: #fff;
-    text-shadow: 0 0 40px var(--neon), 0 0 80px var(--hot);
+    text-shadow: 0 0 30px var(--neon), 0 0 60px var(--hot);
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
+    transition: opacity 0.25s, transform 0.25s;
     text-align: center;
   }
-  #gameNotif.show { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  #gameNotif.show { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
 
-  /* Mobile Touch Controls */
+  /* ================= RESPONSIVE MOBILE TOUCH CONTROLS ================= */
   #mobileControls {
     position: fixed;
-    bottom: 20px;
+    bottom: clamp(10px, 3vw, 20px);
     left: 0;
     right: 0;
     z-index: 60;
     display: none;
     justify-content: space-between;
-    padding: 0 24px;
+    padding: 0 clamp(10px, 3vw, 24px);
     pointer-events: none;
   }
-  .mob-btn {
-    pointer-events: auto;
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    background: rgba(0, 245, 255, 0.18);
-    border: 2px solid rgba(0, 245, 255, 0.45);
-    color: #fff;
-    font-size: 1.8rem;
+  .mob-touch-cluster {
     display: flex;
+    gap: clamp(8px, 2vw, 14px);
+    pointer-events: auto;
+    align-items: flex-end;
+  }
+  .mob-btn {
+    width: clamp(56px, 14vw, 70px);
+    height: clamp(56px, 14vw, 70px);
+    border-radius: 50%;
+    background: rgba(0, 245, 255, 0.2);
+    border: 2px solid rgba(0, 245, 255, 0.5);
+    color: #fff;
+    font-size: clamp(1.4rem, 4.5vw, 1.8rem);
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    line-height: 1;
   }
-  .mob-btn:active { background: rgba(0, 245, 255, 0.45); transform: scale(0.95); }
+  .mob-btn:active, .mob-btn.pressed {
+    background: rgba(0, 245, 255, 0.5) !important;
+    transform: scale(0.92);
+    border-color: #fff;
+  }
+  .mob-btn-label {
+    font-family: var(--font-head);
+    font-size: clamp(0.5rem, 1.4vw, 0.62rem);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
 
-  /* Photo Upload input hidden */
+  /* Room Multiplayer Modal */
+  .room-pill {
+    font-family: var(--font-head);
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+    letter-spacing: 3px;
+    color: var(--gold);
+    background: rgba(0,0,0,0.6);
+    border: 2px dashed var(--gold);
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .player-lobby-list { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; max-height: 160px; overflow-y: auto; }
+  .lobby-item {
+    background: rgba(0, 245, 255, 0.08);
+    border: 1px solid rgba(0, 245, 255, 0.2);
+    border-radius: 8px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+  }
+
   #photoUploadInput { display: none; }
 
-  @media(max-width: 768px) {
+  /* Mobile Adjustments */
+  @media(max-width: 900px), (max-height: 550px) {
     #mobileControls { display: flex; }
-    .speed-cluster { width: 130px; height: 130px; bottom: 100px; right: 16px; }
-    .speed-num { font-size: 2.2rem; }
-    .nitro-gauge-wrap { bottom: 110px; left: 16px; width: 140px; }
+    .speed-cluster { bottom: clamp(80px, 18vw, 100px); right: 12px; }
+    .nitro-gauge-wrap { bottom: clamp(85px, 18vw, 105px); left: 12px; }
+    .radio-pill { bottom: clamp(80px, 18vw, 95px); }
+  }
+
+  /* Landscape Mode on Phones */
+  @media(max-height: 480px) {
+    .glass-card { max-height: 94vh; padding: 10px 16px; }
+    .title-logo { font-size: 1.6rem; }
+    .subtitle { margin-bottom: 6px; font-size: 0.68rem; }
+    .modes-grid { grid-template-columns: repeat(3, 1fr); }
+    .mode-card { padding: 8px; }
+    .mob-btn { width: 50px; height: 50px; font-size: 1.2rem; }
+    .speed-cluster { width: 90px; height: 90px; bottom: 65px; right: 8px; }
+    .speed-num { font-size: 1.6rem; }
   }
 </style>
 </head>
@@ -497,14 +569,15 @@
 <!-- Top Right Buttons -->
 <div class="hud-btns" id="topBtns" style="display:none">
   <button class="hud-btn" onclick="toggleCamera()">🎥 CAM (C)</button>
-  <button class="hud-btn" onclick="toggleAudio()">🔊 MUTE (M)</button>
-  <button class="hud-btn" onclick="pauseGame()">⏸ PAUSE (P)</button>
+  <button class="hud-btn" onclick="toggleAudio()">🔊 MUTE</button>
+  <button class="hud-btn" onclick="toggleFullscreen()">⛶ FULL</button>
+  <button class="hud-btn" onclick="pauseGame()">⏸ PAUSE</button>
 </div>
 
 <!-- ================= MAIN MENU SCREEN ================= -->
 <div class="screen" id="menuScreen">
   <div class="title-logo">RACE<span>X</span> 3D</div>
-  <div class="subtitle">Realistic Supercar Racing & Custom Tuning</div>
+  <div class="subtitle">Realistic Supercar Racing & Multiplayer</div>
 
   <div class="glass-card">
     <!-- Driver License / Profile Bar with Custom Photo -->
@@ -532,34 +605,34 @@
     </div>
 
     <!-- Game Modes -->
-    <div style="font-family:var(--font-head); font-size:0.9rem; letter-spacing:2px; color:var(--neon); text-transform:uppercase;">Select Racing Experience</div>
+    <div style="font-family:var(--font-head); font-size:0.85rem; letter-spacing:1.5px; color:var(--neon); text-transform:uppercase;">Select Racing Experience</div>
     <div class="modes-grid">
       <div class="mode-card" onclick="startSinglePlayer('traffic')">
         <div class="mode-icon">🛣️</div>
         <div class="mode-title">Highway Rush</div>
-        <div class="mode-desc">Realistic traffic cars, curving asphalt, level themes (Cyber City, Sunset, Canyon, Tokyo Rain)!</div>
+        <div class="mode-desc">Realistic traffic, curving road, level themes (City, Sunset, Canyon, Tokyo)!</div>
       </div>
       <div class="mode-card" onclick="startSinglePlayer('rival')">
         <div class="mode-icon">🏁</div>
-        <div class="mode-title">AI Rival Championship</div>
-        <div class="mode-desc">High stakes 3-lap sprint against aggressive AI supercars with multi-currency rewards!</div>
+        <div class="mode-title">AI Championship</div>
+        <div class="mode-desc">High stakes 3-lap sprint against AI supercars with coin rewards!</div>
       </div>
       <div class="mode-card" onclick="openMultiplayerModal()">
         <div class="mode-icon">👥</div>
         <div class="mode-title">Play With Friends</div>
-        <div class="mode-desc">Live WebRTC P2P Multiplayer! Create room, invite friends, race together in real-time!</div>
+        <div class="mode-desc">Live WebRTC P2P Multiplayer! Create room & race together in real-time!</div>
       </div>
     </div>
 
     <!-- Quick Action Buttons -->
-    <div style="display:flex; gap:12px; margin-top:4px; flex-wrap:wrap;">
+    <div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">
       <button class="btn-main btn-hot" style="flex:1" onclick="startSinglePlayer('traffic')">⚡ FAST PLAY</button>
-      <button class="btn-main btn-neon" style="flex:1" onclick="openGarageModal()">🚗 GARAGE & TUNING</button>
-      <button class="btn-main btn-purple" style="flex:1" onclick="openProfileModal()">👤 DRIVER LICENSE / ID</button>
+      <button class="btn-main btn-neon" style="flex:1" onclick="openGarageModal()">🚗 GARAGE</button>
+      <button class="btn-main btn-purple" style="flex:1" onclick="openProfileModal()">👤 DRIVER ID</button>
     </div>
 
-    <div style="text-align:center; font-size:0.85rem; color:#94a3b8; margin-top:2px;">
-      ⌨️ <strong>W/Up</strong> Gas • <strong>S/Down</strong> Brake / <strong>REVERSE (Back)</strong> • <strong>A/D</strong> Steer • <strong>Space</strong> Drift • <strong>Shift</strong> Nitro • <strong>C</strong> Camera
+    <div style="text-align:center; font-size:0.75rem; color:#94a3b8;">
+      📱 <strong>Touch Buttons</strong> on Phone • ⌨️ <strong>WASD / Arrows</strong> on PC • <strong>Shift</strong> Nitro • <strong>S</strong> Reverse
     </div>
   </div>
 </div>
@@ -568,7 +641,7 @@
 <div class="screen hide" id="garageModal">
   <div class="glass-card" style="max-width:760px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div class="title-logo" style="font-size:1.8rem; margin:0;">GARAGE <span>TUNING</span></div>
+      <div class="title-logo" style="font-size:1.6rem; margin:0;">GARAGE <span>TUNING</span></div>
       <button class="hud-btn" onclick="closeModal('garageModal')">✕ CLOSE</button>
     </div>
 
@@ -578,78 +651,74 @@
       <button class="garage-tab-btn" onclick="switchGarageTab('performance')">⚡ PERFORMANCE TUNING</button>
     </div>
 
-    <!-- Tab 1: Car Selection -->
     <div id="tabCars">
-      <div style="color:var(--neon); font-size:0.85rem; letter-spacing:2px; text-transform:uppercase; margin-top:8px;">Select Supercar Model</div>
+      <div style="color:var(--neon); font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; margin-top:6px;">Select Supercar Model</div>
       <div class="car-selector" id="carListContainer"></div>
     </div>
 
-    <!-- Tab 2: Paint & Neon -->
     <div id="tabPaint" style="display:none;">
-      <div style="color:var(--neon); font-size:0.85rem; letter-spacing:2px; text-transform:uppercase; margin-top:8px;">Custom Paint Finish</div>
+      <div style="color:var(--neon); font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; margin-top:6px;">Custom Paint Finish</div>
       <div class="color-picker-row" id="colorPickerContainer"></div>
 
-      <div style="color:var(--neon); font-size:0.85rem; letter-spacing:2px; text-transform:uppercase; margin-top:12px;">Underglow Neon Color</div>
+      <div style="color:var(--neon); font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; margin-top:10px;">Underglow Neon Color</div>
       <div class="color-picker-row" id="neonPickerContainer"></div>
     </div>
 
-    <!-- Tab 3: Performance Tuning -->
     <div id="tabPerformance" style="display:none;">
-      <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
-        <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
-          <div><strong>V8 Twin Turbo Engine (+30 km/h)</strong><div style="font-size:0.8rem; color:#94a3b8">Stage 2 High Flow Turbos</div></div>
-          <button class="btn-main btn-hot" style="padding:8px 16px; font-size:0.8rem;" onclick="upgradeCar('engine')">UPGRADE (500 🪙)</button>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+        <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div><strong>V8 Twin Turbo Engine (+30 km/h)</strong><div style="font-size:0.75rem; color:#94a3b8">Stage 2 High Flow Turbos</div></div>
+          <button class="btn-main btn-hot" style="padding:6px 12px; font-size:0.75rem;" onclick="upgradeCar('engine')">UPGRADE (500 🪙)</button>
         </div>
-        <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
-          <div><strong>Racing Drift Tires</strong><div style="font-size:0.8rem; color:#94a3b8">Ultra High Grip & Drift Angle</div></div>
-          <button class="btn-main btn-neon" style="padding:8px 16px; font-size:0.8rem;" onclick="upgradeCar('tires')">UPGRADE (1000 🥈)</button>
+        <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div><strong>Racing Drift Tires</strong><div style="font-size:0.75rem; color:#94a3b8">Ultra High Grip & Drift Angle</div></div>
+          <button class="btn-main btn-neon" style="padding:6px 12px; font-size:0.75rem;" onclick="upgradeCar('tires')">UPGRADE (1000 🥈)</button>
         </div>
-        <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
-          <div><strong>Nitrous Oxide Dual Tank</strong><div style="font-size:0.8rem; color:#94a3b8">+50% Faster Nitro Refill</div></div>
-          <button class="btn-main btn-purple" style="padding:8px 16px; font-size:0.8rem;" onclick="upgradeCar('nitro')">UPGRADE (4 💎)</button>
+        <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div><strong>Nitrous Oxide Dual Tank</strong><div style="font-size:0.75rem; color:#94a3b8">+50% Faster Nitro Refill</div></div>
+          <button class="btn-main btn-purple" style="padding:6px 12px; font-size:0.75rem;" onclick="upgradeCar('nitro')">UPGRADE (4 💎)</button>
         </div>
       </div>
     </div>
 
-    <button class="btn-main btn-neon" style="margin-top:10px;" onclick="saveGarageAndClose()">💾 SAVE CUSTOMIZATION</button>
+    <button class="btn-main btn-neon" style="margin-top:8px;" onclick="saveGarageAndClose()">💾 SAVE CUSTOMIZATION</button>
   </div>
 </div>
 
-<!-- ================= ACCOUNT PROFILE MODAL (WITH PHOTO UPLOAD) ================= -->
+<!-- ================= ACCOUNT PROFILE MODAL (PHOTO UPLOAD) ================= -->
 <div class="screen hide" id="profileModal">
-  <div class="glass-card" style="max-width:540px;">
+  <div class="glass-card" style="max-width:520px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div class="title-logo" style="font-size:1.8rem; margin:0;">DRIVER <span>ID CARD</span></div>
+      <div class="title-logo" style="font-size:1.6rem; margin:0;">DRIVER <span>ID CARD</span></div>
       <button class="hud-btn" onclick="closeModal('profileModal')">✕ CLOSE</button>
     </div>
 
-    <!-- Photo Upload Section -->
-    <div style="display:flex; align-items:center; gap:16px; background:rgba(0,0,0,0.4); padding:14px; border-radius:12px; border:1px solid rgba(0,245,255,0.2);">
-      <div class="photo-avatar-wrap" style="width:72px; height:72px;" onclick="document.getElementById('photoUploadInput').click()">
+    <div style="display:flex; align-items:center; gap:12px; background:rgba(0,0,0,0.4); padding:12px; border-radius:10px; border:1px solid rgba(0,245,255,0.2);">
+      <div class="photo-avatar-wrap" style="width:64px; height:64px;" onclick="document.getElementById('photoUploadInput').click()">
         <img id="modalPhotoPreview" class="photo-avatar-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2300f5ff'/><text x='50%' y='65%' font-size='50' text-anchor='middle'>🏎️</text></svg>">
       </div>
       <div>
-        <button class="btn-main btn-neon" style="padding:8px 16px; font-size:0.8rem;" onclick="document.getElementById('photoUploadInput').click()">📷 UPLOAD YOUR PHOTO</button>
-        <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Supports JPG, PNG from your phone/PC</div>
+        <button class="btn-main btn-neon" style="padding:6px 14px; font-size:0.75rem;" onclick="document.getElementById('photoUploadInput').click()">📷 UPLOAD PHOTO</button>
+        <div style="font-size:0.72rem; color:#94a3b8; margin-top:2px;">Select photo from Phone / Gallery</div>
         <input type="file" id="photoUploadInput" accept="image/*" onchange="handlePhotoUpload(event)">
       </div>
     </div>
 
     <div>
-      <label style="font-size:0.85rem; color:var(--neon); letter-spacing:1px;">RACER NICKNAME</label>
-      <input type="text" id="accountNameInput" class="cyber-input" placeholder="Enter racer name..." maxlength="16" style="margin-top:6px;">
+      <label style="font-size:0.8rem; color:var(--neon); letter-spacing:1px;">RACER NICKNAME</label>
+      <input type="text" id="accountNameInput" class="cyber-input" placeholder="Enter racer name..." maxlength="16" style="margin-top:4px;">
     </div>
 
-    <div style="background:rgba(0,0,0,0.5); padding:14px; border-radius:10px; border:1px solid rgba(0,245,255,0.2);">
-      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+    <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; border:1px solid rgba(0,245,255,0.2); font-size:0.88rem;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
         <span>Driver ID:</span>
         <strong id="statDriverId" style="color:var(--neon)">RX-8492-PRO</strong>
       </div>
-      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-        <span>Total Distance Driven:</span>
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+        <span>Total Distance:</span>
         <strong id="statDist" style="color:var(--neon)">0 km</strong>
       </div>
-      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
         <span>Races Won:</span>
         <strong id="statWins" style="color:var(--green)">0</strong>
       </div>
@@ -665,38 +734,38 @@
 
 <!-- ================= MULTIPLAYER MODAL ================= -->
 <div class="screen hide" id="multiplayerModal">
-  <div class="glass-card" style="max-width:580px;">
+  <div class="glass-card" style="max-width:540px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div class="title-logo" style="font-size:1.8rem; margin:0;">MULTIPLAYER <span>LOBBY</span></div>
+      <div class="title-logo" style="font-size:1.6rem; margin:0;">MULTIPLAYER <span>LOBBY</span></div>
       <button class="hud-btn" onclick="closeModal('multiplayerModal')">✕ CLOSE</button>
     </div>
 
     <div id="mpHostSection">
-      <div style="color:var(--neon); font-size:0.85rem; letter-spacing:2px; text-transform:uppercase;">Host a Room for Friends</div>
-      <button class="btn-main btn-hot" style="width:100%; margin-top:8px;" onclick="createMultiplayerRoom()">👑 CREATE ROOM & GET CODE</button>
+      <div style="color:var(--neon); font-size:0.8rem; letter-spacing:1px; text-transform:uppercase;">Host a Room for Friends</div>
+      <button class="btn-main btn-hot" style="width:100%; margin-top:6px;" onclick="createMultiplayerRoom()">👑 CREATE ROOM & GET CODE</button>
     </div>
 
-    <div style="text-align:center; font-family:var(--font-head); color:#94a3b8; font-size:0.9rem;">— OR JOIN FRIEND'S ROOM —</div>
+    <div style="text-align:center; font-family:var(--font-head); color:#94a3b8; font-size:0.85rem;">— OR JOIN FRIEND'S ROOM —</div>
 
     <div id="mpJoinSection">
-      <div style="display:flex; gap:10px;">
-        <input type="text" id="roomCodeInput" class="cyber-input" placeholder="Enter 6-digit Room Code..." style="text-transform:uppercase; text-align:center; letter-spacing:3px;">
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="roomCodeInput" class="cyber-input" placeholder="Enter 6-digit Room Code..." style="text-transform:uppercase; text-align:center; letter-spacing:2px;">
         <button class="btn-main btn-neon" onclick="joinMultiplayerRoom()">JOIN 🚀</button>
       </div>
     </div>
 
-    <div id="mpActiveLobby" style="display:none; flex-direction:column; gap:10px;">
+    <div id="mpActiveLobby" style="display:none; flex-direction:column; gap:8px;">
       <div style="text-align:center;">
-        <div style="font-size:0.85rem; color:#94a3b8;">SHARE THIS ROOM CODE WITH FRIENDS:</div>
+        <div style="font-size:0.8rem; color:#94a3b8;">SHARE THIS ROOM CODE WITH FRIENDS:</div>
         <div class="room-pill" id="displayRoomCode" onclick="copyRoomCode()">------</div>
-        <div style="font-size:0.75rem; color:var(--green); margin-top:4px;">(Click code to copy)</div>
+        <div style="font-size:0.72rem; color:var(--green); margin-top:2px;">(Tap code to copy)</div>
       </div>
 
-      <div style="color:var(--neon); font-size:0.85rem; letter-spacing:2px; text-transform:uppercase;">Connected Racers (<span id="mpPlayerCount">1</span>/4)</div>
+      <div style="color:var(--neon); font-size:0.8rem; letter-spacing:1px; text-transform:uppercase;">Connected Racers (<span id="mpPlayerCount">1</span>/4)</div>
       <div class="player-lobby-list" id="mpLobbyList"></div>
 
       <button class="btn-main btn-hot" id="mpStartBtn" style="display:none; width:100%;" onclick="startMultiplayerGame()">🏁 START RACE NOW!</button>
-      <div id="mpWaitingHostText" style="text-align:center; color:var(--gold); font-size:0.9rem;">Waiting for host to start race...</div>
+      <div id="mpWaitingHostText" style="text-align:center; color:var(--gold); font-size:0.85rem;">Waiting for host to start race...</div>
     </div>
   </div>
 </div>
@@ -704,19 +773,19 @@
 <!-- ================= GAME OVER SCREEN ================= -->
 <div class="screen hide" id="gameOverScreen">
   <div class="title-logo" style="color:var(--hot);">RACE <span>FINISHED</span></div>
-  <div class="glass-card" style="max-width:500px; text-align:center; align-items:center;">
-    <div style="font-size:4rem;" id="goEmoji">🏆</div>
-    <div style="font-family:var(--font-head); font-size:1.8rem; color:#fff;" id="goTitle">VICTORY!</div>
-    <div style="font-family:var(--font-head); font-size:1.2rem; color:var(--gold);" id="goScoreText">Distance: 0 m</div>
+  <div class="glass-card" style="max-width:480px; text-align:center; align-items:center;">
+    <div style="font-size:3.5rem;" id="goEmoji">🏆</div>
+    <div style="font-family:var(--font-head); font-size:1.6rem; color:#fff;" id="goTitle">VICTORY!</div>
+    <div style="font-family:var(--font-head); font-size:1.1rem; color:var(--gold);" id="goScoreText">Distance: 0 m</div>
 
-    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0;">
+    <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:8px 0;">
       <div class="currency-pill gold" id="goGoldEarned">+120 🪙</div>
       <div class="currency-pill silver" id="goSilverEarned">+350 🥈</div>
       <div class="currency-pill iron" id="goIronEarned">+500 🥉</div>
       <div class="currency-pill diamond" id="goDiamondEarned">+2 💎</div>
     </div>
 
-    <div style="display:flex; gap:12px; width:100%; margin-top:12px;">
+    <div style="display:flex; gap:10px; width:100%; margin-top:8px;">
       <button class="btn-main btn-hot" style="flex:1" onclick="restartCurrentGame()">🔄 PLAY AGAIN</button>
       <button class="btn-main btn-outline" style="flex:1" onclick="returnToMenu()">🏠 MENU</button>
     </div>
@@ -725,8 +794,8 @@
 
 <!-- ================= PAUSE MODAL ================= -->
 <div class="screen hide" id="pauseModal">
-  <div class="title-logo" style="color:var(--gold); font-size:2.6rem;">GAME <span>PAUSED</span></div>
-  <div class="glass-card" style="max-width:380px; text-align:center;">
+  <div class="title-logo" style="color:var(--gold); font-size:2.2rem;">GAME <span>PAUSED</span></div>
+  <div class="glass-card" style="max-width:360px; text-align:center;">
     <button class="btn-main btn-neon" onclick="resumeGame()">▶ RESUME</button>
     <button class="btn-main btn-outline" onclick="returnToMenu()">🏠 MAIN MENU</button>
   </div>
@@ -734,7 +803,6 @@
 
 <!-- ================= IN-GAME HUD ================= -->
 <div id="hud">
-  <!-- Top Stat Bar -->
   <div class="hud-top">
     <div class="hud-stat-box">
       <div class="hud-stat-title">SCORE / DIST</div>
@@ -747,7 +815,6 @@
     </div>
   </div>
 
-  <!-- Live Multi-Currency Counter in HUD -->
   <div class="hud-currency-live">
     <div class="currency-pill gold"><span>🪙</span><span id="hudLiveGold">0</span></div>
     <div class="currency-pill silver"><span>🥈</span><span id="hudLiveSilver">0</span></div>
@@ -755,13 +822,11 @@
     <div class="currency-pill diamond"><span>💎</span><span id="hudLiveDiamond">0</span></div>
   </div>
 
-  <!-- Radio Station Button -->
   <div class="radio-pill" onclick="cycleRadioTrack()">
     <span>📻</span>
     <span id="radioTrackName">Radio: Cyber Beat</span>
   </div>
 
-  <!-- Nitro Gauge -->
   <div class="nitro-gauge-wrap">
     <div class="nitro-label">
       <span>⚡ NITRO TURBO</span>
@@ -772,7 +837,6 @@
     </div>
   </div>
 
-  <!-- Speedometer with Reverse Gear Indicator -->
   <div class="speed-cluster">
     <div class="speed-num" id="speedDisplay">0</div>
     <div class="speed-unit">KM / H</div>
@@ -780,25 +844,42 @@
   </div>
 </div>
 
-<!-- Big Notification Text -->
 <div id="gameNotif">GO!</div>
 
-<!-- Mobile Touch Controls -->
+<!-- ================= MOBILE RESPONSIVE TOUCH CONTROLS ================= -->
 <div id="mobileControls">
-  <div style="display:flex; gap:16px;">
-    <div class="mob-btn" id="mLeft">◀</div>
-    <div class="mob-btn" id="mRight">▶</div>
+  <!-- Left Side: Steering Cluster -->
+  <div class="mob-touch-cluster">
+    <div class="mob-btn" id="mLeft" role="button">
+      <span>◀</span>
+      <span class="mob-btn-label">LEFT</span>
+    </div>
+    <div class="mob-btn" id="mRight" role="button">
+      <span>▶</span>
+      <span class="mob-btn-label">RIGHT</span>
+    </div>
   </div>
-  <div style="display:flex; gap:16px;">
-    <div class="mob-btn" id="mBrake" style="background:rgba(255,45,85,0.25); border-color:var(--hot)">🛑<br><span style="font-size:0.6rem">REV</span></div>
-    <div class="mob-btn" id="mNitro" style="background:rgba(0,245,255,0.25); border-color:var(--neon)">⚡</div>
-    <div class="mob-btn" id="mGas" style="background:rgba(0,255,136,0.25); border-color:var(--green)">▲</div>
+
+  <!-- Right Side: Action Cluster (Gas, Brake/Rev, Nitro) -->
+  <div class="mob-touch-cluster">
+    <div class="mob-btn" id="mBrake" style="background:rgba(255,45,85,0.28); border-color:var(--hot);" role="button">
+      <span>🛑</span>
+      <span class="mob-btn-label" style="color:var(--hot)">REV</span>
+    </div>
+    <div class="mob-btn" id="mNitro" style="background:rgba(0,245,255,0.28); border-color:var(--neon);" role="button">
+      <span>⚡</span>
+      <span class="mob-btn-label" style="color:var(--neon)">NITRO</span>
+    </div>
+    <div class="mob-btn" id="mGas" style="background:rgba(0,255,136,0.28); border-color:var(--green);" role="button">
+      <span>▲</span>
+      <span class="mob-btn-label" style="color:var(--green)">GAS</span>
+    </div>
   </div>
 </div>
 
 <!-- ================= 3D GAME ENGINE SCRIPT ================= -->
 <script>
-/* --- SOUND ENGINE WITH BACKGROUND MUSIC SYNTHESIZER --- */
+/* --- SOUND ENGINE WITH SYNTHESIZER --- */
 class SoundEngine {
   constructor() {
     this.ctx = null;
@@ -910,6 +991,14 @@ function cycleRadioTrack() {
   showNotification('📻 ' + sound.tracks[sound.currentTrack]);
 }
 
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+  }
+}
+
 /* --- PLAYER ACCOUNT, MULTI-CURRENCY & GARAGE --- */
 const CAR_DATABASE = [
   { id: 'apex_gt', name: 'Apex GT', topSpeed: 230, accel: 1.0, handling: 1.0, icon: '🏎️', baseColor: 0xff1744 },
@@ -997,7 +1086,7 @@ function handlePhotoUpload(event) {
   reader.onload = function(e) {
     userData.photo = e.target.result;
     saveUserData();
-    showNotification('📷 Photo Uploaded Successfully!');
+    showNotification('📷 Photo Uploaded!');
   };
   reader.readAsDataURL(file);
 }
@@ -1276,7 +1365,7 @@ for (let i = 0; i < NUM_CHUNKS; i++) {
   chunks.push(createCurvedChunk(-i * CHUNK_LENGTH));
 }
 
-/* --- SPARSE NATURAL PEDESTRIANS ON SIDEWALK --- */
+/* --- SPARSE PEDESTRIANS ON SIDEWALK --- */
 const pedestrians = [];
 function createPedestrianMesh() {
   const ped = new THREE.Group();
@@ -1433,19 +1522,36 @@ window.addEventListener('keyup', (e) => {
   if (e.code === 'Space') keys.drift = false;
 });
 
-function bindTouch(id, keyName) {
-  const el = document.getElementById(id);
+// MULTI-TOUCH RESPONSIVE TOUCH CONTROL BINDINGS (SUPPORTS SIMULTANEOUS TOUCHES)
+function bindTouchButton(elementId, actionKey) {
+  const el = document.getElementById(elementId);
   if (!el) return;
-  el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; });
-  el.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; });
-  el.addEventListener('mousedown', () => { keys[keyName] = true; });
-  el.addEventListener('mouseup', () => { keys[keyName] = false; });
+
+  const press = (e) => {
+    e.preventDefault();
+    keys[actionKey] = true;
+    el.classList.add('pressed');
+    if (navigator.vibrate) navigator.vibrate(10);
+  };
+  const release = (e) => {
+    e.preventDefault();
+    keys[actionKey] = false;
+    el.classList.remove('pressed');
+  };
+
+  el.addEventListener('touchstart', press, { passive: false });
+  el.addEventListener('touchend', release, { passive: false });
+  el.addEventListener('touchcancel', release, { passive: false });
+  el.addEventListener('mousedown', press);
+  el.addEventListener('mouseup', release);
+  el.addEventListener('mouseleave', release);
 }
-bindTouch('mLeft', 'left');
-bindTouch('mRight', 'right');
-bindTouch('mGas', 'forward');
-bindTouch('mBrake', 'backward');
-bindTouch('mNitro', 'nitro');
+
+bindTouchButton('mLeft', 'left');
+bindTouchButton('mRight', 'right');
+bindTouchButton('mGas', 'forward');
+bindTouchButton('mBrake', 'backward');
+bindTouchButton('mNitro', 'nitro');
 
 /* --- MULTIPLAYER P2P ENGINE (PEERJS) --- */
 let peer = null;
@@ -1909,7 +2015,7 @@ function openGarageModal() {
   CAR_DATABASE.forEach(car => {
     const card = document.createElement('div');
     card.className = `car-card ${userData.selectedCar === car.id ? 'selected' : ''}`;
-    card.innerHTML = `<div style="font-size:1.8rem">${car.icon}</div><div class="car-name">${car.name}</div><div style="font-size:0.75rem; color:#94a3b8">${car.topSpeed} km/h</div>`;
+    card.innerHTML = `<div style="font-size:1.6rem">${car.icon}</div><div class="car-name">${car.name}</div><div style="font-size:0.72rem; color:#94a3b8">${car.topSpeed} km/h</div>`;
     card.onclick = () => { userData.selectedCar = car.id; openGarageModal(); };
     carContainer.appendChild(card);
   });
@@ -1957,11 +2063,13 @@ function animate(time) {
 }
 requestAnimationFrame(animate);
 
-window.addEventListener('resize', () => {
+function handleResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-});
+}
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', () => { setTimeout(handleResize, 150); });
 </script>
 
 </body>
