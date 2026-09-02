@@ -385,7 +385,7 @@
     gap: 4px;
   }
 
-  /* Live Multiplayer Ranking Standings */
+  /* Live Standings */
   .hud-multi-rankings {
     position: absolute;
     top: clamp(65px, 12vw, 75px);
@@ -401,7 +401,7 @@
   .hud-rank-row { display: flex; justify-content: space-between; margin: 2px 0; color: #94a3b8; }
   .hud-rank-row.me { color: var(--neon); font-weight: bold; }
 
-  /* Prominent Top Action HUD Bar */
+  /* Top Right Action HUD Bar */
   .hud-btns {
     position: fixed;
     top: clamp(8px, 2vw, 14px);
@@ -592,15 +592,15 @@
     <!-- Game Modes Grid -->
     <div style="font-family:var(--font-head); font-size:0.85rem; letter-spacing:1.5px; color:var(--neon); text-transform:uppercase;">Select Racing Experience</div>
     <div class="modes-grid">
+      <div class="mode-card" onclick="startSinglePlayer('rival')">
+        <div class="mode-icon">🏁</div>
+        <div class="mode-title">AI Rival Championship</div>
+        <div class="mode-desc">Race against active AI supercars (Ferrari, Lamborghini, Bugatti) with live overtakes!</div>
+      </div>
       <div class="mode-card" onclick="startSinglePlayer('traffic')">
         <div class="mode-icon">🛣️</div>
         <div class="mode-title">Highway Rush</div>
         <div class="mode-desc">Realistic traffic cars, curving asphalt, level themes (Cyber City, Sunset, Canyon, Tokyo)!</div>
-      </div>
-      <div class="mode-card" onclick="startSinglePlayer('rival')">
-        <div class="mode-icon">🏁</div>
-        <div class="mode-title">AI Championship</div>
-        <div class="mode-desc">High stakes 3-lap sprint against AI supercars with coin rewards!</div>
       </div>
       <div class="mode-card" onclick="openMultiplayerModal()">
         <div class="mode-icon">👥</div>
@@ -611,7 +611,7 @@
 
     <!-- Quick Buttons -->
     <div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">
-      <button class="btn-main btn-hot" style="flex:1" onclick="startSinglePlayer('traffic')">⚡ FAST PLAY</button>
+      <button class="btn-main btn-hot" style="flex:1" onclick="startSinglePlayer('rival')">⚡ START RACE</button>
       <button class="btn-main btn-neon" style="flex:1" onclick="openGarageModal()">🚗 CARS & GARAGE</button>
       <button class="btn-main btn-green" style="flex:1" onclick="openMultiplayerModal()">👥 INVITE FRIENDS</button>
       <button class="btn-main btn-purple" style="flex:1" onclick="openProfileModal()">👤 DRIVER ID</button>
@@ -814,8 +814,8 @@
     <div class="currency-pill diamond"><span>💎</span><span id="hudLiveDiamond">0</span></div>
   </div>
 
-  <div class="hud-multi-rankings" id="hudMultiLeaderboard" style="display:none;">
-    <div style="color:var(--neon); font-size:0.7rem; border-bottom:1px solid rgba(0,245,255,0.2); padding-bottom:2px; margin-bottom:4px;">LIVE RACE</div>
+  <div class="hud-multi-rankings" id="hudMultiLeaderboard">
+    <div style="color:var(--neon); font-size:0.7rem; border-bottom:1px solid rgba(0,245,255,0.2); padding-bottom:2px; margin-bottom:4px;">LIVE RACE RANK</div>
     <div id="multiRankRows"></div>
   </div>
 
@@ -1015,21 +1015,21 @@ function toggleFullscreen() {
 
 /* --- 6+ AUTHENTIC SUPERCAR DATABASE --- */
 const CAR_DATABASE = [
-  { id: 'apex_gt', name: 'Ferrari SF90 Coupe', topSpeed: 245, accel: 1.1, handling: 1.05, icon: '🏎️', baseColor: 0xff1744 },
-  { id: 'venom_v12', name: 'Lamborghini Aventador SV', topSpeed: 290, accel: 1.35, handling: 1.2, icon: '⚡', baseColor: 0xffd60a },
-  { id: 'bugatti_chiron', name: 'Bugatti Chiron Hyper', topSpeed: 340, accel: 1.6, handling: 1.3, icon: '🚀', baseColor: 0x0099ff },
+  { id: 'apex_gt', name: 'Ferrari SF90 Stradale', topSpeed: 245, accel: 1.15, handling: 1.1, icon: '🏎️', baseColor: 0xff1744 },
+  { id: 'venom_v12', name: 'Lamborghini Aventador SVJ', topSpeed: 290, accel: 1.35, handling: 1.2, icon: '⚡', baseColor: 0xffd60a },
+  { id: 'bugatti_chiron', name: 'Bugatti Chiron Super Sport', topSpeed: 340, accel: 1.6, handling: 1.3, icon: '🚀', baseColor: 0x0099ff },
   { id: 'mclaren_p1', name: 'McLaren P1 Hybrid', topSpeed: 310, accel: 1.45, handling: 1.35, icon: '🔥', baseColor: 0xff6b35 },
   { id: 'porsche_gt3', name: 'Porsche 911 GT3 RS', topSpeed: 275, accel: 1.3, handling: 1.45, icon: '🏁', baseColor: 0x00ff88 },
   { id: 'cybertruck_gt', name: 'Cyber Beast Armored', topSpeed: 260, accel: 1.5, handling: 1.1, icon: '🛡️', baseColor: 0x94a3b8 }
 ];
 
 const CAR_COLORS = [
-  { name: 'Ferrari Crimson', hex: '#ff2d55', val: 0xff2d55 },
-  { name: 'Neon Cyan Glow', hex: '#00f5ff', val: 0x00f5ff },
-  { name: 'Midnight Purple', hex: '#b026ff', val: 0xb026ff },
-  { name: 'Lamborghini Gold', hex: '#ffd60a', val: 0xffd60a },
+  { name: 'Ferrari Crimson Red', hex: '#ff1744', val: 0xff1744 },
+  { name: 'Lamborghini Electric Gold', hex: '#ffd60a', val: 0xffd60a },
+  { name: 'Bugatti Royal Blue', hex: '#0099ff', val: 0x0099ff },
   { name: 'Acid Green Pearl', hex: '#00ff88', val: 0x00ff88 },
   { name: 'McLaren Orange', hex: '#ff6b35', val: 0xff6b35 },
+  { name: 'Midnight Purple', hex: '#b026ff', val: 0xb026ff },
   { name: 'Stealth Matte Black', hex: '#111827', val: 0x111827 },
   { name: 'Pure Diamond White', hex: '#ffffff', val: 0xffffff }
 ];
@@ -1056,7 +1056,7 @@ let userData = {
   wins: parseInt(localStorage.getItem('racex_wins')) || 0,
   dist: parseInt(localStorage.getItem('racex_dist')) || 0,
   selectedCar: localStorage.getItem('racex_car') || 'apex_gt',
-  carColor: parseInt(localStorage.getItem('racex_color')) || 0xff2d55,
+  carColor: parseInt(localStorage.getItem('racex_color')) || 0xff1744,
   neonColor: parseInt(localStorage.getItem('racex_neon')) || 0x00f5ff
 };
 
@@ -1110,11 +1110,11 @@ function handlePhotoUpload(event) {
   reader.readAsDataURL(file);
 }
 
-/* --- THREE.JS 3D SCENE --- */
+/* --- THREE.JS 3D SCENE & NEON CITY SKYLINE --- */
 const canvas = document.getElementById('webgl-canvas');
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x060f1c);
-scene.fog = new THREE.FogExp2(0x060f1c, 0.0038);
+scene.fog = new THREE.FogExp2(0x060f1c, 0.0035);
 
 const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
@@ -1123,10 +1123,10 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0xfff5e6, 1.2);
+const dirLight = new THREE.DirectionalLight(0xfff5e6, 1.3);
 dirLight.position.set(50, 100, 40);
 dirLight.castShadow = true;
 scene.add(dirLight);
@@ -1153,7 +1153,7 @@ function applyLevelTheme(lvlIdx) {
 }
 
 /* --- HIGH DETAIL 3D SUPERCAR MODEL MAKER --- */
-function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, carModelId = 'apex_gt') {
+function createRealisticSupercarMesh(colorHex = 0xff1744, neonHex = 0x00f5ff, carModelId = 'apex_gt') {
   const car = new THREE.Group();
 
   const chassisGeo = new THREE.BoxGeometry(2.1, 0.22, 4.6);
@@ -1310,7 +1310,7 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
   return car;
 }
 
-/* --- SEAMLESS HIGHWAY ROAD & ENVIRONMENT --- */
+/* --- CYBER HIGHWAY & GLOWING SKYSCRAPER BUILDINGS --- */
 const ROAD_WIDTH = 22;
 const LANES = 4;
 const LANE_WIDTH = ROAD_WIDTH / LANES;
@@ -1326,9 +1326,9 @@ const roadTextureCanvas = document.createElement('canvas');
 roadTextureCanvas.width = 512;
 roadTextureCanvas.height = 512;
 const rCtx = roadTextureCanvas.getContext('2d');
-rCtx.fillStyle = '#181e26';
+rCtx.fillStyle = '#161d26';
 rCtx.fillRect(0, 0, 512, 512);
-rCtx.strokeStyle = 'rgba(255,255,255,0.7)';
+rCtx.strokeStyle = 'rgba(255,255,255,0.75)';
 rCtx.lineWidth = 10;
 rCtx.setLineDash([40, 40]);
 for (let i = 1; i < LANES; i++) {
@@ -1377,17 +1377,32 @@ function createCurvedChunk(zPos) {
   rRail.position.set(ROAD_WIDTH / 2 + 0.2, 0.5, 0);
   group.add(rRail);
 
-  for (let i = 0; i < 2; i++) {
-    const bHeight = 30 + Math.random() * 45;
-    const bGeo = new THREE.BoxGeometry(16, bHeight, 22);
-    const bMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5, metalness: 0.4 });
+  // Glowing Skyscrapers along Highway
+  const neonNeonColors = [0x00f5ff, 0xb026ff, 0xff2d55, 0xffd60a, 0x00ff88];
+  for (let i = 0; i < 3; i++) {
+    const bHeight = 45 + Math.random() * 55;
+    const bGeo = new THREE.BoxGeometry(18, bHeight, 26);
+    const bMat = new THREE.MeshStandardMaterial({ color: 0x0c1726, roughness: 0.3, metalness: 0.7 });
     const bL = new THREE.Mesh(bGeo, bMat);
-    bL.position.set(-ROAD_WIDTH / 2 - 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50);
+    bL.position.set(-ROAD_WIDTH / 2 - 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 36);
     group.add(bL);
 
+    // Glowing Neon Signs on Buildings
+    const signGeo = new THREE.PlaneGeometry(12, 3);
+    const signMat = new THREE.MeshBasicMaterial({ color: neonNeonColors[i % neonNeonColors.length] });
+    const signL = new THREE.Mesh(signGeo, signMat);
+    signL.position.set(-ROAD_WIDTH / 2 - 12.8, 18 + i * 8, -CHUNK_LENGTH / 2 + i * 36);
+    signL.rotation.y = Math.PI / 2;
+    group.add(signL);
+
     const bR = new THREE.Mesh(bGeo, bMat);
-    bR.position.set(ROAD_WIDTH / 2 + 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50);
+    bR.position.set(ROAD_WIDTH / 2 + 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 36);
     group.add(bR);
+
+    const signR = new THREE.Mesh(signGeo, signMat);
+    signR.position.set(ROAD_WIDTH / 2 + 12.8, 18 + i * 8, -CHUNK_LENGTH / 2 + i * 36);
+    signR.rotation.y = -Math.PI / 2;
+    group.add(signR);
   }
 
   scene.add(group);
@@ -1398,75 +1413,47 @@ for (let i = 0; i < NUM_CHUNKS; i++) {
   chunks.push(createCurvedChunk(-i * CHUNK_LENGTH));
 }
 
-/* --- SIDEWALK PEDESTRIANS --- */
-const pedestrians = [];
-function createPedestrianMesh() {
-  const ped = new THREE.Group();
+/* --- ACTIVE AI RACING RIVALS --- */
+const AI_RIVALS_DATA = [
+  { name: 'Ferrari SF90 (Alex)', carId: 'apex_gt', color: 0xff1744, speedRatio: 0.98, lane: 1, zOffset: -25 },
+  { name: 'Lambo SVJ (Viper)', carId: 'venom_v12', color: 0xffd60a, speedRatio: 1.02, lane: 2, zOffset: -60 },
+  { name: 'Bugatti (Shadow)', carId: 'bugatti_chiron', color: 0x0099ff, speedRatio: 1.06, lane: 0, zOffset: -95 },
+  { name: 'Porsche (SpeedFox)', carId: 'porsche_gt3', color: 0x00ff88, speedRatio: 0.95, lane: 3, zOffset: -130 }
+];
+const aiRivalMeshes = [];
 
-  const headGeo = new THREE.SphereGeometry(0.2, 10, 10);
-  const headMat = new THREE.MeshStandardMaterial({ color: 0xffdfc4 });
-  const head = new THREE.Mesh(headGeo, headMat);
-  head.position.y = 1.6;
-  ped.add(head);
+function spawnAiRivals() {
+  aiRivalMeshes.forEach(r => scene.remove(r.mesh));
+  aiRivalMeshes.length = 0;
 
-  const shirtColors = [0xff2d55, 0x00f5ff, 0xffd60a, 0x00ff88, 0xffffff, 0x3b82f6];
-  const torsoGeo = new THREE.BoxGeometry(0.4, 0.6, 0.25);
-  const torsoMat = new THREE.MeshStandardMaterial({ color: shirtColors[Math.floor(Math.random() * shirtColors.length)] });
-  const torso = new THREE.Mesh(torsoGeo, torsoMat);
-  torso.position.y = 1.15;
-  ped.add(torso);
-
-  const legGeo = new THREE.BoxGeometry(0.14, 0.7, 0.16);
-  const legMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
-  const lLeg = new THREE.Mesh(legGeo, legMat);
-  lLeg.position.set(-0.1, 0.45, 0);
-  const rLeg = new THREE.Mesh(legGeo, legMat);
-  rLeg.position.set(0.1, 0.45, 0);
-  ped.add(lLeg);
-  ped.add(rLeg);
-
-  const armGeo = new THREE.BoxGeometry(0.1, 0.5, 0.12);
-  const armMat = new THREE.MeshStandardMaterial({ color: 0xffdfc4 });
-  const lArm = new THREE.Mesh(armGeo, armMat);
-  lArm.position.set(-0.28, 1.1, 0);
-  const rArm = new THREE.Mesh(armGeo, armMat);
-  rArm.position.set(0.28, 1.1, 0);
-  ped.add(lArm);
-  ped.add(rArm);
-
-  ped.lLeg = lLeg; ped.rLeg = rLeg; ped.lArm = lArm; ped.rArm = rArm;
-  ped.walkPhase = Math.random() * Math.PI * 2;
-  ped.walkSpeed = 1.1 + Math.random() * 1.2;
-  ped.side = Math.random() > 0.5 ? 1 : -1;
-  return ped;
-}
-
-function initPedestrians() {
-  pedestrians.forEach(p => scene.remove(p.mesh));
-  pedestrians.length = 0;
-  for (let i = 0; i < 6; i++) {
-    const mesh = createPedestrianMesh();
-    const zPos = -i * 65 - 40;
-    const curveX = getRoadCurveX(zPos);
-    const sideX = curveX + (mesh.side > 0 ? ROAD_WIDTH / 2 + 2.8 : -ROAD_WIDTH / 2 - 2.8);
-    mesh.position.set(sideX, 0, zPos);
+  AI_RIVALS_DATA.forEach(rData => {
+    const mesh = createRealisticSupercarMesh(rData.color, 0x00f5ff, rData.carId);
+    mesh.position.z = rData.zOffset;
+    const cX = getRoadCurveX(mesh.position.z);
+    mesh.position.x = cX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + rData.lane * LANE_WIDTH;
     scene.add(mesh);
-    pedestrians.push({ mesh, side: mesh.side, baseSpeed: 0.04 + Math.random() * 0.03 });
-  }
+    aiRivalMeshes.push({
+      mesh,
+      name: rData.name,
+      speedRatio: rData.speedRatio,
+      lane: rData.lane,
+      dist: -rData.zOffset
+    });
+  });
 }
 
-/* --- DENSE TRAFFIC WITH VIBRANT COLORFUL CARS --- */
+/* --- TRAFFIC & COIN PICKUPS --- */
 const trafficVehicles = [];
 const pickupItems = [];
 
 function spawnTraffic() {
   trafficVehicles.forEach(v => scene.remove(v.mesh));
   trafficVehicles.length = 0;
-  const colors = [0xff1744, 0xffd60a, 0x00f5ff, 0x00ff88, 0xff6b35, 0xb026ff, 0xffffff, 0x3b82f6];
+  const colors = [0xff1744, 0xffd60a, 0x0099ff, 0x00ff88, 0xff6b35, 0xb026ff, 0xffffff, 0x3b82f6];
 
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 14; i++) {
     const carMesh = createRealisticSupercarMesh(colors[i % colors.length], 0x000000, 'apex_gt');
-    const z = -35 - i * 32;
+    const z = -45 - i * 36;
     const curveX = getRoadCurveX(z);
     const lane = Math.floor(Math.random() * LANES);
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
@@ -1479,22 +1466,22 @@ function spawnTraffic() {
 function spawnPickups() {
   pickupItems.forEach(p => scene.remove(p.mesh));
   pickupItems.length = 0;
-  const types = ['iron', 'iron', 'silver', 'silver', 'gold', 'diamond'];
+  const types = ['gold', 'gold', 'silver', 'silver', 'iron', 'diamond'];
 
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 16; i++) {
     const type = types[Math.floor(Math.random() * types.length)];
     let geo, mat;
     if (type === 'diamond') {
-      geo = new THREE.OctahedronGeometry(0.65, 0);
+      geo = new THREE.OctahedronGeometry(0.75, 0);
       mat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.95, roughness: 0.1, emissive: 0x0284c7 });
     } else {
-      geo = new THREE.CylinderGeometry(0.65, 0.65, 0.16, 16);
+      geo = new THREE.CylinderGeometry(0.75, 0.75, 0.2, 16);
       geo.rotateX(Math.PI / 2);
       const colors = { gold: 0xffd60a, silver: 0xe2e8f0, iron: 0xcd7f32 };
-      mat = new THREE.MeshStandardMaterial({ color: colors[type], metalness: 0.9, roughness: 0.15 });
+      mat = new THREE.MeshStandardMaterial({ color: colors[type], metalness: 0.9, roughness: 0.15, emissive: type === 'gold' ? 0x665500 : 0x000000 });
     }
     const mesh = new THREE.Mesh(geo, mat);
-    const z = -35 - i * 38;
+    const z = -30 - i * 35;
     const curveX = getRoadCurveX(z);
     const lane = Math.floor(Math.random() * LANES);
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
@@ -1517,10 +1504,10 @@ createPlayerVehicle();
 /* --- GAME STATE & DYNAMICS --- */
 let isPlaying = false;
 let isPaused = false;
-let gameMode = 'traffic';
+let gameMode = 'rival';
 let playerSpeed = 0;
 let playerMaxSpeed = 245;
-let playerAccel = 1.1;
+let playerAccel = 1.15;
 let playerX = 0;
 let playerZ = 0;
 let playerSteer = 0;
@@ -1720,7 +1707,6 @@ function startMultiplayerGame() {
 function startMultiplayerRaceClient() {
   closeAllModals();
   gameMode = 'multiplayer';
-  document.getElementById('hudMultiLeaderboard').style.display = 'block';
   initRace();
 }
 
@@ -1729,7 +1715,6 @@ function startSinglePlayer(mode) {
   sound.init();
   closeAllModals();
   gameMode = mode;
-  document.getElementById('hudMultiLeaderboard').style.display = 'none';
   initRace();
 }
 
@@ -1750,7 +1735,7 @@ function initRace() {
   document.getElementById('topBtns').style.display = 'flex';
 
   applyLevelTheme(0);
-  initPedestrians();
+  spawnAiRivals();
   spawnTraffic();
   spawnPickups();
 
@@ -1856,22 +1841,24 @@ function updatePhysics(delta) {
     }
   });
 
-  pedestrians.forEach(p => {
-    p.mesh.walkPhase += delta * 6 * p.mesh.walkSpeed;
-    p.mesh.lLeg.rotation.x = Math.sin(p.mesh.walkPhase) * 0.55;
-    p.mesh.rLeg.rotation.x = -Math.sin(p.mesh.walkPhase) * 0.55;
-    p.mesh.lArm.rotation.x = -Math.sin(p.mesh.walkPhase) * 0.55;
-    p.mesh.rArm.rotation.x = Math.sin(p.mesh.walkPhase) * 0.55;
+  // Dynamic AI Rival Supercars
+  aiRivalMeshes.forEach(r => {
+    const rivalSpd = (playerSpeed > 10 ? playerSpeed : 180) * r.speedRatio;
+    r.mesh.position.z -= (rivalSpd / 3.6) * delta;
+    r.dist += (rivalSpd / 3.6) * delta;
+    const cX = getRoadCurveX(r.mesh.position.z);
+    r.mesh.position.x = cX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + r.lane * LANE_WIDTH;
 
-    p.mesh.position.z += p.baseSpeed;
-    const curveX = getRoadCurveX(p.mesh.position.z);
-    p.mesh.position.x = curveX + (p.side > 0 ? ROAD_WIDTH / 2 + 2.8 : -ROAD_WIDTH / 2 - 2.8);
+    r.mesh.wheels.forEach(w => { w.rotation.x -= (rivalSpd * 0.1) * delta; });
 
-    if (p.mesh.position.z > playerZ + 20) {
-      p.mesh.position.z = playerZ - 220 - Math.random() * 80;
+    const dx = Math.abs(r.mesh.position.x - playerX);
+    const dz = Math.abs(r.mesh.position.z - playerZ);
+    if (dx < 1.9 && dz < 4.0) {
+      handleCrash();
     }
   });
 
+  // Highway Traffic
   trafficVehicles.forEach(t => {
     t.mesh.position.z -= t.speed;
     const cX = getRoadCurveX(t.mesh.position.z);
@@ -1889,6 +1876,7 @@ function updatePhysics(delta) {
     }
   });
 
+  // Coin and Diamond Pickups
   pickupItems.forEach(item => {
     item.mesh.rotation.y += delta * 3;
     if (item.mesh.position.z > playerZ + 20) {
@@ -1973,20 +1961,23 @@ function updateHUD() {
     gearEl.innerText = 'GEAR ' + gear;
   }
 
-  if (gameMode === 'multiplayer') {
-    const list = [{ name: userData.name, dist: distanceDriven, isMe: true }];
+  // Live Standings
+  const list = [{ name: userData.name + ' (YOU)', dist: distanceDriven, isMe: true }];
+  if (gameMode === 'rival') {
+    aiRivalMeshes.forEach(r => list.push({ name: r.name, dist: r.dist, isMe: false }));
+  } else if (gameMode === 'multiplayer') {
     remotePlayerMeshes.forEach(rc => list.push({ name: rc.playerName, dist: rc.dist || 0, isMe: false }));
-    list.sort((a, b) => b.dist - a.dist);
-
-    const myRankIdx = list.findIndex(p => p.isMe);
-    document.getElementById('hudRank').innerText = (myRankIdx + 1) + (myRankIdx === 0 ? 'st' : myRankIdx === 1 ? 'nd' : 'rd');
-
-    const rows = document.getElementById('multiRankRows');
-    rows.innerHTML = '';
-    list.forEach((p, idx) => {
-      rows.innerHTML += `<div class="hud-rank-row ${p.isMe ? 'me' : ''}"><span>${idx + 1}. ${p.name}</span><span>${Math.floor(p.dist)}m</span></div>`;
-    });
   }
+  list.sort((a, b) => b.dist - a.dist);
+
+  const myRankIdx = list.findIndex(p => p.isMe);
+  document.getElementById('hudRank').innerText = (myRankIdx + 1) + (myRankIdx === 0 ? 'st' : myRankIdx === 1 ? 'nd' : 'rd');
+
+  const rows = document.getElementById('multiRankRows');
+  rows.innerHTML = '';
+  list.slice(0, 4).forEach((p, idx) => {
+    rows.innerHTML += `<div class="hud-rank-row ${p.isMe ? 'me' : ''}"><span>${idx + 1}. ${p.name}</span><span>${Math.floor(p.dist)}m</span></div>`;
+  });
 }
 
 function handleCrash() {
@@ -2045,7 +2036,6 @@ function closeAllModals() { document.querySelectorAll('.screen').forEach(s => s.
 function closeModal(id) {
   document.getElementById(id).classList.add('hide');
   if (isPlaying) {
-    // If playing, returning to game HUD
     document.getElementById('hud').classList.add('active');
     document.getElementById('topBtns').style.display = 'flex';
   } else {
