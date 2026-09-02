@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#060a10">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>RaceX 3D — Real Supercar Racing & Instant Multiplayer</title>
+<title>RaceX 3D — Real Supercar Racing & Multiplayer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Three.js 3D Engine -->
@@ -25,8 +25,8 @@
     --diamond: #38bdf8;
     --green: #00ff88;
     --dark: #060a10;
-    --card: rgba(10, 18, 30, 0.95);
-    --border: rgba(0, 245, 255, 0.32);
+    --card: rgba(10, 18, 30, 0.96);
+    --border: rgba(0, 245, 255, 0.35);
     --font-head: 'Orbitron', sans-serif;
     --font-body: 'Rajdhani', sans-serif;
   }
@@ -83,7 +83,7 @@
     pointer-events: none;
   }
 
-  /* Title Header */
+  /* Header */
   .title-logo {
     font-family: var(--font-head);
     font-size: clamp(1.8rem, 7vw, 3.8rem);
@@ -122,7 +122,7 @@
     overflow-y: auto;
   }
 
-  /* Multi-Currency Economy Bar */
+  /* Economy Bar */
   .currency-bar {
     display: flex;
     align-items: center;
@@ -147,7 +147,7 @@
   .currency-pill.iron { color: var(--iron); border-color: rgba(205, 127, 50, 0.4); }
   .currency-pill.diamond { color: var(--diamond); border-color: rgba(56, 189, 248, 0.4); }
 
-  /* Driver Profile */
+  /* Profile Card */
   .profile-bar {
     display: flex;
     align-items: center;
@@ -189,7 +189,7 @@
   .player-id-tag { font-family: var(--font-head); font-size: 0.68rem; color: var(--neon); letter-spacing: 1px; }
   .player-rank-badge { font-size: clamp(0.72rem, 2vw, 0.8rem); color: var(--gold); font-weight: 700; letter-spacing: 1px; }
 
-  /* Game Modes Grid */
+  /* Modes Grid */
   .modes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -240,7 +240,7 @@
   .btn-purple { background: linear-gradient(135deg, #b026ff 0%, #ff2d55 100%); color: #fff; box-shadow: 0 0 20px rgba(176, 38, 255, 0.4); }
   .btn-outline { background: transparent; border: 1px solid var(--neon); color: var(--neon); }
 
-  /* Input fields */
+  /* Inputs */
   .cyber-input {
     background: rgba(5, 10, 18, 0.85);
     border: 1px solid rgba(0, 245, 255, 0.35);
@@ -254,7 +254,7 @@
   }
   .cyber-input:focus { border-color: var(--neon); box-shadow: 0 0 12px rgba(0, 245, 255, 0.35); }
 
-  /* Garage & Customizer */
+  /* Garage Modal */
   .garage-tabs { display: flex; gap: 6px; border-bottom: 1px solid rgba(0, 245, 255, 0.2); padding-bottom: 6px; overflow-x: auto; }
   .garage-tab-btn {
     background: rgba(0,0,0,0.5);
@@ -268,20 +268,21 @@
     white-space: nowrap;
   }
   .garage-tab-btn.active { color: var(--neon); border-color: var(--neon); background: rgba(0,245,255,0.15); }
-  .car-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 8px 0; }
+  .car-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 10px 0; }
   .car-card {
     background: rgba(0,0,0,0.6);
     border: 2px solid rgba(0,245,255,0.2);
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 12px 8px;
     text-align: center;
     cursor: pointer;
+    transition: all 0.2s;
   }
-  .car-card.selected { border-color: var(--neon); background: rgba(0, 245, 255, 0.15); box-shadow: 0 0 15px rgba(0, 245, 255, 0.35); }
-  .car-name { font-family: var(--font-head); font-weight: 700; font-size: 0.85rem; color: #fff; margin-top: 2px; }
+  .car-card.selected { border-color: var(--neon); background: rgba(0, 245, 255, 0.2); box-shadow: 0 0 20px rgba(0, 245, 255, 0.4); transform: scale(1.02); }
+  .car-name { font-family: var(--font-head); font-weight: 700; font-size: 0.88rem; color: #fff; margin-top: 4px; }
   .color-picker-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
-  .color-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-  .color-dot:active, .color-dot.active { transform: scale(1.18); border-color: #fff; box-shadow: 0 0 12px currentColor; }
+  .color-dot { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+  .color-dot:active, .color-dot.active { transform: scale(1.2); border-color: #fff; box-shadow: 0 0 14px currentColor; }
 
   /* In-Game HUD */
   #hud {
@@ -310,7 +311,7 @@
   .hud-stat-title { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; }
   .hud-stat-value { font-family: var(--font-head); font-size: clamp(1rem, 3.5vw, 1.3rem); font-weight: 800; color: #fff; }
 
-  /* Speedometer Cluster */
+  /* Speedometer */
   .speed-cluster {
     position: absolute;
     bottom: clamp(14px, 4vw, 24px);
@@ -384,7 +385,7 @@
     gap: 4px;
   }
 
-  /* Live Multiplayer Ranking Standings in HUD */
+  /* Live Multiplayer Ranking Standings */
   .hud-multi-rankings {
     position: absolute;
     top: clamp(65px, 12vw, 75px);
@@ -400,7 +401,7 @@
   .hud-rank-row { display: flex; justify-content: space-between; margin: 2px 0; color: #94a3b8; }
   .hud-rank-row.me { color: var(--neon); font-weight: bold; }
 
-  /* Top Right HUD Buttons */
+  /* Prominent Top Action HUD Bar */
   .hud-btns {
     position: fixed;
     top: clamp(8px, 2vw, 14px);
@@ -408,18 +409,25 @@
     z-index: 70;
     display: flex;
     gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
   .hud-btn {
-    background: rgba(4, 10, 20, 0.85);
-    border: 1px solid rgba(0, 245, 255, 0.3);
+    background: rgba(4, 10, 20, 0.88);
+    border: 1px solid rgba(0, 245, 255, 0.35);
     color: var(--neon);
     border-radius: 6px;
     padding: 6px 10px;
     font-family: var(--font-head);
     font-size: clamp(0.68rem, 2vw, 0.76rem);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
-  .hud-btn:active { background: rgba(0, 245, 255, 0.2); }
+  .hud-btn.hot { border-color: var(--hot); color: var(--hot); background: rgba(255, 45, 85, 0.15); }
+  .hud-btn.green { border-color: var(--green); color: var(--green); background: rgba(0, 255, 136, 0.15); }
+  .hud-btn:active { transform: scale(0.96); }
 
   /* Big Notification Text */
   #gameNotif {
@@ -541,9 +549,11 @@
 
 <canvas id="webgl-canvas"></canvas>
 
-<!-- Top Right Buttons -->
+<!-- Top Right In-Game Actions (Quick Car Change & Invite Friends) -->
 <div class="hud-btns" id="topBtns" style="display:none">
-  <button class="hud-btn" onclick="toggleCamera()">🎥 CAM (C)</button>
+  <button class="hud-btn hot" onclick="openGarageModal()">🚗 CARS</button>
+  <button class="hud-btn green" onclick="openMultiplayerModal()">👥 FRIENDS</button>
+  <button class="hud-btn" onclick="toggleCamera()">🎥 CAM</button>
   <button class="hud-btn" onclick="toggleAudio()">🔊 MUTE</button>
   <button class="hud-btn" onclick="toggleFullscreen()">⛶ FULL</button>
   <button class="hud-btn" onclick="pauseGame()">⏸ PAUSE</button>
@@ -555,7 +565,7 @@
   <div class="subtitle">Realistic Supercar Racing & Instant Multiplayer</div>
 
   <div class="glass-card">
-    <!-- Driver License / Profile Bar with Custom Photo -->
+    <!-- Driver Profile -->
     <div class="profile-bar">
       <div class="profile-info">
         <div class="photo-avatar-wrap" onclick="openProfileModal()" title="Click to Change Photo / Profile">
@@ -570,7 +580,7 @@
         </div>
       </div>
 
-      <!-- Multi-Tier Currency Vault -->
+      <!-- Currency Vault -->
       <div class="currency-bar">
         <div class="currency-pill diamond" title="Diamonds"><span>💎</span><span id="curDiamond">12</span></div>
         <div class="currency-pill gold" title="Gold Coins"><span>🪙</span><span id="curGold">850</span></div>
@@ -579,8 +589,8 @@
       </div>
     </div>
 
-    <!-- Game Modes -->
-    <div style="font-family:var(--font-head); font-size:0.85rem; letter-spacing:1.5px; color:var(--neon); text-transform:uppercase;">Select Racing Mode</div>
+    <!-- Game Modes Grid -->
+    <div style="font-family:var(--font-head); font-size:0.85rem; letter-spacing:1.5px; color:var(--neon); text-transform:uppercase;">Select Racing Experience</div>
     <div class="modes-grid">
       <div class="mode-card" onclick="startSinglePlayer('traffic')">
         <div class="mode-icon">🛣️</div>
@@ -599,10 +609,11 @@
       </div>
     </div>
 
-    <!-- Quick Action Buttons -->
+    <!-- Quick Buttons -->
     <div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">
       <button class="btn-main btn-hot" style="flex:1" onclick="startSinglePlayer('traffic')">⚡ FAST PLAY</button>
-      <button class="btn-main btn-neon" style="flex:1" onclick="openGarageModal()">🚗 GARAGE & TUNING</button>
+      <button class="btn-main btn-neon" style="flex:1" onclick="openGarageModal()">🚗 CARS & GARAGE</button>
+      <button class="btn-main btn-green" style="flex:1" onclick="openMultiplayerModal()">👥 INVITE FRIENDS</button>
       <button class="btn-main btn-purple" style="flex:1" onclick="openProfileModal()">👤 DRIVER ID</button>
     </div>
 
@@ -612,22 +623,22 @@
   </div>
 </div>
 
-<!-- ================= GARAGE & TUNING MODAL ================= -->
+<!-- ================= GARAGE & VEHICLE SELECTOR MODAL ================= -->
 <div class="screen hide" id="garageModal">
-  <div class="glass-card" style="max-width:760px;">
+  <div class="glass-card" style="max-width:780px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div class="title-logo" style="font-size:1.6rem; margin:0;">GARAGE <span>TUNING</span></div>
+      <div class="title-logo" style="font-size:1.6rem; margin:0;">SELECT <span>SUPERCAR</span></div>
       <button class="hud-btn" onclick="closeModal('garageModal')">✕ CLOSE</button>
     </div>
 
     <div class="garage-tabs">
-      <button class="garage-tab-btn active" onclick="switchGarageTab('cars')">🏎️ VEHICLES</button>
+      <button class="garage-tab-btn active" onclick="switchGarageTab('cars')">🏎️ ALL VEHICLES (6+ CARS)</button>
       <button class="garage-tab-btn" onclick="switchGarageTab('paint')">🎨 PAINT & NEON</button>
-      <button class="garage-tab-btn" onclick="switchGarageTab('performance')">⚡ PERFORMANCE TUNING</button>
+      <button class="garage-tab-btn" onclick="switchGarageTab('performance')">⚡ PERFORMANCE UPGRADES</button>
     </div>
 
     <div id="tabCars">
-      <div style="color:var(--neon); font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; margin-top:6px;">Select Supercar Model</div>
+      <div style="color:var(--neon); font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; margin-top:6px;">Choose Your Racing Vehicle</div>
       <div class="car-selector" id="carListContainer"></div>
     </div>
 
@@ -656,11 +667,11 @@
       </div>
     </div>
 
-    <button class="btn-main btn-neon" style="margin-top:8px;" onclick="saveGarageAndClose()">💾 SAVE CUSTOMIZATION</button>
+    <button class="btn-main btn-neon" style="margin-top:8px;" onclick="saveGarageAndClose()">💾 SAVE & DRIVE THIS CAR</button>
   </div>
 </div>
 
-<!-- ================= ACCOUNT PROFILE MODAL (PHOTO UPLOAD) ================= -->
+<!-- ================= ACCOUNT PROFILE MODAL ================= -->
 <div class="screen hide" id="profileModal">
   <div class="glass-card" style="max-width:520px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -707,16 +718,16 @@
   </div>
 </div>
 
-<!-- ================= MULTIPLAYER MODAL (INSTANT FRIEND INVITE) ================= -->
+<!-- ================= MULTIPLAYER MODAL (INVITE FRIENDS) ================= -->
 <div class="screen hide" id="multiplayerModal">
   <div class="glass-card" style="max-width:560px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div class="title-logo" style="font-size:1.6rem; margin:0;">MULTIPLAYER <span>RACE</span></div>
+      <div class="title-logo" style="font-size:1.6rem; margin:0;">INVITE <span>FRIENDS</span></div>
       <button class="hud-btn" onclick="closeModal('multiplayerModal')">✕ CLOSE</button>
     </div>
 
     <div id="mpHostSection">
-      <div style="color:var(--neon); font-size:0.82rem; letter-spacing:1px; text-transform:uppercase;">Host Race Room for Friends</div>
+      <div style="color:var(--neon); font-size:0.82rem; letter-spacing:1px; text-transform:uppercase;">Host Race Room & Invite Friends</div>
       <button class="btn-main btn-hot" style="width:100%; margin-top:6px;" onclick="createMultiplayerRoom()">👑 CREATE ROOM & GET INVITE LINK</button>
     </div>
 
@@ -724,7 +735,7 @@
 
     <div id="mpJoinSection">
       <div style="display:flex; gap:8px;">
-        <input type="text" id="roomCodeInput" class="cyber-input" placeholder="Enter 6-digit Room Code..." style="text-transform:uppercase; text-align:center; letter-spacing:2px;">
+        <input type="text" id="roomCodeInput" class="cyber-input" placeholder="Enter Room Code..." style="text-transform:uppercase; text-align:center; letter-spacing:2px;">
         <button class="btn-main btn-neon" onclick="joinMultiplayerRoom()">JOIN 🚀</button>
       </div>
     </div>
@@ -736,7 +747,7 @@
       </div>
 
       <div style="display:flex; gap:8px; justify-content:center;">
-        <button class="btn-main btn-green" style="flex:1" onclick="shareWhatsAppInvite()">📲 SHARE ON WHATSAPP</button>
+        <button class="btn-main btn-green" style="flex:1" onclick="shareWhatsAppInvite()">📲 SEND ON WHATSAPP</button>
         <button class="btn-main btn-neon" style="flex:1" onclick="copyInviteLink()">🔗 COPY INVITE LINK</button>
       </div>
 
@@ -774,8 +785,10 @@
 <!-- ================= PAUSE MODAL ================= -->
 <div class="screen hide" id="pauseModal">
   <div class="title-logo" style="color:var(--gold); font-size:2.2rem;">GAME <span>PAUSED</span></div>
-  <div class="glass-card" style="max-width:360px; text-align:center;">
+  <div class="glass-card" style="max-width:380px; text-align:center;">
     <button class="btn-main btn-neon" onclick="resumeGame()">▶ RESUME</button>
+    <button class="btn-main btn-hot" onclick="openGarageModal()">🚗 CHANGE CAR</button>
+    <button class="btn-main btn-green" onclick="openMultiplayerModal()">👥 INVITE FRIENDS</button>
     <button class="btn-main btn-outline" onclick="returnToMenu()">🏠 MAIN MENU</button>
   </div>
 </div>
@@ -830,7 +843,7 @@
 
 <div id="gameNotif">GO!</div>
 
-<!-- ================= MOBILE RESPONSIVE TOUCH CONTROLS ================= -->
+<!-- ================= TOUCH CONTROLS ================= -->
 <div id="mobileControls">
   <div class="mob-touch-cluster">
     <div class="mob-btn" id="mLeft" role="button">
@@ -861,7 +874,7 @@
 
 <!-- ================= 3D GAME ENGINE SCRIPT ================= -->
 <script>
-/* --- SOUND ENGINE WITH STEREO DRUMS & SYNTH MELODY --- */
+/* --- SOUND ENGINE --- */
 class SoundEngine {
   constructor() {
     this.ctx = null;
@@ -879,7 +892,6 @@ class SoundEngine {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     this.ctx = new AudioContext();
 
-    // Dual-oscillator engine rumble (Deep bass + high rpm harmonic)
     this.engineOsc = this.ctx.createOscillator();
     this.engineGain = this.ctx.createGain();
     this.engineOsc.type = 'sawtooth';
@@ -957,9 +969,9 @@ class SoundEngine {
     if (this.musicTimer) clearInterval(this.musicTimer);
     let step = 0;
     const trackScales = [
-      [164.8, 196.0, 220.0, 246.9, 293.6, 329.6], // Cyber Beat
-      [146.8, 174.6, 196.0, 220.0, 261.6, 293.6], // Tokyo Night Rush
-      [130.8, 155.5, 174.6, 196.0, 233.0, 261.6]  // Hyper Synth Bass
+      [164.8, 196.0, 220.0, 246.9, 293.6, 329.6],
+      [146.8, 174.6, 196.0, 220.0, 261.6, 293.6],
+      [130.8, 155.5, 174.6, 196.0, 233.0, 261.6]
     ];
     this.musicTimer = setInterval(() => {
       if (!this.ctx || this.muted || !isPlaying) return;
@@ -1001,12 +1013,14 @@ function toggleFullscreen() {
   }
 }
 
-/* --- PLAYER ACCOUNT, MULTI-CURRENCY & GARAGE --- */
+/* --- 6+ AUTHENTIC SUPERCAR DATABASE --- */
 const CAR_DATABASE = [
-  { id: 'apex_gt', name: 'Ferrari Apex GT', topSpeed: 235, accel: 1.0, handling: 1.0, icon: '🏎️', baseColor: 0xff1744, type: 'coupe' },
-  { id: 'venom_v12', name: 'Lamborghini Venom V12', topSpeed: 285, accel: 1.35, handling: 1.18, icon: '⚡', baseColor: 0x00f5ff, type: 'hyper' },
-  { id: 'cyber_phantom', name: 'Cyber Phantom GT', topSpeed: 320, accel: 1.55, handling: 1.3, icon: '🚀', baseColor: 0xb026ff, type: 'cyber' },
-  { id: 'inferno_formula', name: 'Inferno F1 Beast', topSpeed: 360, accel: 1.8, handling: 1.5, icon: '👑', baseColor: 0xffd60a, type: 'f1' }
+  { id: 'apex_gt', name: 'Ferrari SF90 Coupe', topSpeed: 245, accel: 1.1, handling: 1.05, icon: '🏎️', baseColor: 0xff1744 },
+  { id: 'venom_v12', name: 'Lamborghini Aventador SV', topSpeed: 290, accel: 1.35, handling: 1.2, icon: '⚡', baseColor: 0xffd60a },
+  { id: 'bugatti_chiron', name: 'Bugatti Chiron Hyper', topSpeed: 340, accel: 1.6, handling: 1.3, icon: '🚀', baseColor: 0x0099ff },
+  { id: 'mclaren_p1', name: 'McLaren P1 Hybrid', topSpeed: 310, accel: 1.45, handling: 1.35, icon: '🔥', baseColor: 0xff6b35 },
+  { id: 'porsche_gt3', name: 'Porsche 911 GT3 RS', topSpeed: 275, accel: 1.3, handling: 1.45, icon: '🏁', baseColor: 0x00ff88 },
+  { id: 'cybertruck_gt', name: 'Cyber Beast Armored', topSpeed: 260, accel: 1.5, handling: 1.1, icon: '🛡️', baseColor: 0x94a3b8 }
 ];
 
 const CAR_COLORS = [
@@ -1015,7 +1029,9 @@ const CAR_COLORS = [
   { name: 'Midnight Purple', hex: '#b026ff', val: 0xb026ff },
   { name: 'Lamborghini Gold', hex: '#ffd60a', val: 0xffd60a },
   { name: 'Acid Green Pearl', hex: '#00ff88', val: 0x00ff88 },
-  { name: 'Stealth Matte Black', hex: '#111827', val: 0x111827 }
+  { name: 'McLaren Orange', hex: '#ff6b35', val: 0xff6b35 },
+  { name: 'Stealth Matte Black', hex: '#111827', val: 0x111827 },
+  { name: 'Pure Diamond White', hex: '#ffffff', val: 0xffffff }
 ];
 
 const NEON_COLORS = [
@@ -1023,6 +1039,7 @@ const NEON_COLORS = [
   { name: 'Hot Pink', hex: '#ff2d55', val: 0xff2d55 },
   { name: 'Emerald', hex: '#00ff88', val: 0x00ff88 },
   { name: 'Deep Purple', hex: '#b026ff', val: 0xb026ff },
+  { name: 'Electric Gold', hex: '#ffd60a', val: 0xffd60a },
   { name: 'None', hex: '#333333', val: 0x000000 }
 ];
 
@@ -1093,11 +1110,11 @@ function handlePhotoUpload(event) {
   reader.readAsDataURL(file);
 }
 
-/* --- 3D SCENE & ENGINE SETUP (THREE.JS) --- */
+/* --- THREE.JS 3D SCENE --- */
 const canvas = document.getElementById('webgl-canvas');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x050a14);
-scene.fog = new THREE.FogExp2(0x050a14, 0.0045);
+scene.background = new THREE.Color(0x060f1c);
+scene.fog = new THREE.FogExp2(0x060f1c, 0.0038);
 
 const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
@@ -1106,24 +1123,24 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-const ambientLight = new THREE.AmbientLight(0xddeeff, 0.65);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0xfff5e6, 1.0);
+const dirLight = new THREE.DirectionalLight(0xfff5e6, 1.2);
 dirLight.position.set(50, 100, 40);
 dirLight.castShadow = true;
 scene.add(dirLight);
 
 const skyGeo = new THREE.SphereGeometry(600, 32, 16);
-const skyMat = new THREE.MeshBasicMaterial({ color: 0x07111f, side: THREE.BackSide });
+const skyMat = new THREE.MeshBasicMaterial({ color: 0x071526, side: THREE.BackSide });
 const skyDome = new THREE.Mesh(skyGeo, skyMat);
 scene.add(skyDome);
 
 const LEVEL_THEMES = [
-  { name: 'LEVEL 1: CYBER CITY', sky: 0x050a14, fog: 0x050a14, light: 0xffffff, road: '#1c2229' },
-  { name: 'LEVEL 2: SUNSET COAST', sky: 0x2b0d38, fog: 0x2b0d38, light: 0xffaa55, road: '#252129' },
-  { name: 'LEVEL 3: CANYON FOREST', sky: 0x0b2518, fog: 0x0b2518, light: 0xddffdd, road: '#1b241c' },
-  { name: 'LEVEL 4: TOKYO RAIN', sky: 0x030712, fog: 0x030712, light: 0x00f5ff, road: '#111827' }
+  { name: 'LEVEL 1: CYBER CITY', sky: 0x060f1c, fog: 0x060f1c, light: 0xffffff },
+  { name: 'LEVEL 2: SUNSET COAST', sky: 0x2b0d38, fog: 0x2b0d38, light: 0xffaa55 },
+  { name: 'LEVEL 3: CANYON FOREST', sky: 0x0b2518, fog: 0x0b2518, light: 0xddffdd },
+  { name: 'LEVEL 4: TOKYO RAIN', sky: 0x030712, fog: 0x030712, light: 0x00f5ff }
 ];
 
 function applyLevelTheme(lvlIdx) {
@@ -1135,37 +1152,35 @@ function applyLevelTheme(lvlIdx) {
   document.getElementById('hudLevelBadge').innerText = theme.name;
 }
 
-/* --- AUTHENTIC REALISTIC 3D SUPERCAR BUILDER --- */
+/* --- HIGH DETAIL 3D SUPERCAR MODEL MAKER --- */
 function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, carModelId = 'apex_gt') {
   const car = new THREE.Group();
 
-  // 1. Lower Aerodynamic Chassis
   const chassisGeo = new THREE.BoxGeometry(2.1, 0.22, 4.6);
   const chassisMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8, metalness: 0.9 });
   const chassis = new THREE.Mesh(chassisGeo, chassisMat);
   chassis.position.y = 0.32;
   car.add(chassis);
 
-  // 2. Realistic Aerodynamic Body Shell
   const bodyGeo = new THREE.BoxGeometry(2.05, 0.52, 4.4);
   const bodyMat = new THREE.MeshStandardMaterial({
     color: colorHex,
-    metalness: 0.88,
-    roughness: 0.16
+    metalness: 0.9,
+    roughness: 0.15
   });
   const body = new THREE.Mesh(bodyGeo, bodyMat);
   body.position.y = 0.62;
   body.castShadow = true;
   car.add(body);
 
-  // 3. Slanted Front Hood & Aerodynamic Nose
+  // Aerodynamic Hood
   const hoodGeo = new THREE.BoxGeometry(1.9, 0.22, 1.45);
   const hood = new THREE.Mesh(hoodGeo, bodyMat);
   hood.position.set(0, 0.65, -1.4);
   hood.rotation.x = 0.14;
   car.add(hood);
 
-  // 4. Curved Cockpit with Tinted Glass
+  // Tinted Glass Cockpit
   const cabinGeo = new THREE.BoxGeometry(1.62, 0.52, 2.1);
   const glassMat = new THREE.MeshStandardMaterial({ color: 0x050c14, metalness: 0.95, roughness: 0.05 });
   const cabin = new THREE.Mesh(cabinGeo, glassMat);
@@ -1173,14 +1188,14 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
   cabin.castShadow = true;
   car.add(cabin);
 
-  // 5. Front Honeycomb Grille & Carbon Splitter
+  // Honeycomb Front Grille
   const grilleGeo = new THREE.BoxGeometry(1.5, 0.18, 0.12);
   const grilleMat = new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0.95 });
   const grille = new THREE.Mesh(grilleGeo, grilleMat);
   grille.position.set(0, 0.42, -2.31);
   car.add(grille);
 
-  // 6. Aerodynamic Side Mirrors
+  // Mirrors
   const mirrorGeo = new THREE.BoxGeometry(0.28, 0.1, 0.16);
   const lMirror = new THREE.Mesh(mirrorGeo, bodyMat);
   lMirror.position.set(-1.12, 0.92, -0.6);
@@ -1189,14 +1204,14 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
   car.add(lMirror);
   car.add(rMirror);
 
-  // 7. GT Racing Rear Spoiler
+  // Rear GT Spoiler
   const spoilerGeo = new THREE.BoxGeometry(1.95, 0.08, 0.45);
   const spoilerMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3, metalness: 0.9 });
   const spoiler = new THREE.Mesh(spoilerGeo, spoilerMat);
   spoiler.position.set(0, 1.25, 2.0);
   car.add(spoiler);
 
-  // 8. Headlights (Bright Xenon Projectors)
+  // Xenon Headlights
   const lightGeo = new THREE.BoxGeometry(0.42, 0.12, 0.08);
   const lightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const lLight = new THREE.Mesh(lightGeo, lightMat);
@@ -1206,7 +1221,7 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
   car.add(lLight);
   car.add(rLight);
 
-  // 9. Taillights (Red LED Strip)
+  // Red LED Taillights
   const tailMat = new THREE.MeshBasicMaterial({ color: 0xff1133 });
   const lTail = new THREE.Mesh(lightGeo, tailMat);
   lTail.position.set(-0.72, 0.65, 2.26);
@@ -1215,7 +1230,7 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
   car.add(lTail);
   car.add(rTail);
 
-  // 10. Reverse Lights (White Glow)
+  // White Reverse Lights
   const revMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
   const lRev = new THREE.Mesh(lightGeo, revMat);
   lRev.position.set(-0.35, 0.48, 2.26);
@@ -1225,7 +1240,7 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
   car.add(rRev);
   car.reverseLights = [lRev, rRev];
 
-  // 11. Quad Chrome Exhaust Pipes
+  // Quad Chrome Exhausts
   const exhaustGeo = new THREE.CylinderGeometry(0.09, 0.09, 0.3, 12);
   exhaustGeo.rotateX(Math.PI / 2);
   const exhaustMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.95 });
@@ -1236,7 +1251,7 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
   car.add(lExhaust);
   car.add(rExhaust);
 
-  // 12. Realistic Alloy Wheels with Red Brake Calipers
+  // Alloy Wheels with Red Calipers
   const wheelGeo = new THREE.CylinderGeometry(0.38, 0.38, 0.34, 20);
   const wheelMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.9 });
   wheelGeo.rotateZ(Math.PI / 2);
@@ -1270,7 +1285,7 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
     car.wheels.push(wGroup);
   });
 
-  // 13. Neon Underglow
+  // Neon Underglow
   if (neonHex && neonHex !== 0x000000) {
     const neonGeo = new THREE.PlaneGeometry(1.85, 3.9);
     const neonMat = new THREE.MeshBasicMaterial({ color: neonHex, side: THREE.DoubleSide, transparent: true, opacity: 0.75 });
@@ -1280,7 +1295,7 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
     car.add(neonMesh);
   }
 
-  // 14. Dual Nitro Fire Jets
+  // Dual Nitro Fire Flames
   const fireGeo = new THREE.ConeGeometry(0.2, 0.9, 8);
   fireGeo.rotateX(Math.PI / 2);
   const fireMat = new THREE.MeshBasicMaterial({ color: 0x00f5ff, transparent: true, opacity: 0 });
@@ -1295,7 +1310,7 @@ function createRealisticSupercarMesh(colorHex = 0xff2d55, neonHex = 0x00f5ff, ca
   return car;
 }
 
-/* --- CURVING ROAD & ENVIRONMENT GENERATOR --- */
+/* --- SEAMLESS HIGHWAY ROAD & ENVIRONMENT --- */
 const ROAD_WIDTH = 22;
 const LANES = 4;
 const LANE_WIDTH = ROAD_WIDTH / LANES;
@@ -1304,7 +1319,7 @@ const NUM_CHUNKS = 10;
 const chunks = [];
 
 function getRoadCurveX(zPos) {
-  return Math.sin(zPos * 0.007) * 24 + Math.cos(zPos * 0.003) * 16;
+  return Math.sin(zPos * 0.005) * 20 + Math.cos(zPos * 0.002) * 12;
 }
 
 const roadTextureCanvas = document.createElement('canvas');
@@ -1336,14 +1351,14 @@ function createCurvedChunk(zPos) {
   group.position.z = zPos;
   group.position.x = getRoadCurveX(zPos);
 
-  const roadGeo = new THREE.PlaneGeometry(ROAD_WIDTH, CHUNK_LENGTH);
+  const roadGeo = new THREE.PlaneGeometry(ROAD_WIDTH, CHUNK_LENGTH + 0.5);
   const roadMat = new THREE.MeshStandardMaterial({ map: roadTexture, roughness: 0.8, metalness: 0.1 });
   const roadMesh = new THREE.Mesh(roadGeo, roadMat);
   roadMesh.rotation.x = -Math.PI / 2;
   roadMesh.receiveShadow = true;
   group.add(roadMesh);
 
-  const sideGeo = new THREE.BoxGeometry(4.5, 0.35, CHUNK_LENGTH);
+  const sideGeo = new THREE.BoxGeometry(4.5, 0.35, CHUNK_LENGTH + 0.5);
   const sideMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.9 });
   const leftWalk = new THREE.Mesh(sideGeo, sideMat);
   leftWalk.position.set(-ROAD_WIDTH / 2 - 2.25, 0.18, 0);
@@ -1353,7 +1368,7 @@ function createCurvedChunk(zPos) {
   rightWalk.position.set(ROAD_WIDTH / 2 + 2.25, 0.18, 0);
   group.add(rightWalk);
 
-  const railGeo = new THREE.BoxGeometry(0.3, 0.8, CHUNK_LENGTH);
+  const railGeo = new THREE.BoxGeometry(0.3, 0.8, CHUNK_LENGTH + 0.5);
   const railMat = new THREE.MeshStandardMaterial({ color: 0x00f5ff, emissive: 0x004455, metalness: 0.8 });
   const lRail = new THREE.Mesh(railGeo, railMat);
   lRail.position.set(-ROAD_WIDTH / 2 - 0.2, 0.5, 0);
@@ -1383,7 +1398,7 @@ for (let i = 0; i < NUM_CHUNKS; i++) {
   chunks.push(createCurvedChunk(-i * CHUNK_LENGTH));
 }
 
-/* --- SPARSE PEDESTRIANS ON SIDEWALK --- */
+/* --- SIDEWALK PEDESTRIANS --- */
 const pedestrians = [];
 function createPedestrianMesh() {
   const ped = new THREE.Group();
@@ -1440,24 +1455,24 @@ function initPedestrians() {
   }
 }
 
-/* --- RICH TRAFFIC OF CARS --- */
+/* --- DENSE TRAFFIC WITH VIBRANT COLORFUL CARS --- */
 const trafficVehicles = [];
 const pickupItems = [];
 
 function spawnTraffic() {
   trafficVehicles.forEach(v => scene.remove(v.mesh));
   trafficVehicles.length = 0;
-  const colors = [0x22c55e, 0xeab308, 0xef4444, 0x3b82f6, 0xa855f7, 0xf97316, 0xffffff, 0x111827];
+  const colors = [0xff1744, 0xffd60a, 0x00f5ff, 0x00ff88, 0xff6b35, 0xb026ff, 0xffffff, 0x3b82f6];
 
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 16; i++) {
     const carMesh = createRealisticSupercarMesh(colors[i % colors.length], 0x000000, 'apex_gt');
-    const z = -40 - i * 38;
+    const z = -35 - i * 32;
     const curveX = getRoadCurveX(z);
     const lane = Math.floor(Math.random() * LANES);
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
     carMesh.position.set(x, 0, z);
     scene.add(carMesh);
-    trafficVehicles.push({ mesh: carMesh, lane, speed: 0.75 + Math.random() * 0.45 });
+    trafficVehicles.push({ mesh: carMesh, lane, speed: 0.8 + Math.random() * 0.45 });
   }
 }
 
@@ -1466,7 +1481,7 @@ function spawnPickups() {
   pickupItems.length = 0;
   const types = ['iron', 'iron', 'silver', 'silver', 'gold', 'diamond'];
 
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 14; i++) {
     const type = types[Math.floor(Math.random() * types.length)];
     let geo, mat;
     if (type === 'diamond') {
@@ -1479,7 +1494,7 @@ function spawnPickups() {
       mat = new THREE.MeshStandardMaterial({ color: colors[type], metalness: 0.9, roughness: 0.15 });
     }
     const mesh = new THREE.Mesh(geo, mat);
-    const z = -40 - i * 42;
+    const z = -35 - i * 38;
     const curveX = getRoadCurveX(z);
     const lane = Math.floor(Math.random() * LANES);
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
@@ -1504,8 +1519,8 @@ let isPlaying = false;
 let isPaused = false;
 let gameMode = 'traffic';
 let playerSpeed = 0;
-let playerMaxSpeed = 235;
-let playerAccel = 1.0;
+let playerMaxSpeed = 245;
+let playerAccel = 1.1;
 let playerX = 0;
 let playerZ = 0;
 let playerSteer = 0;
@@ -1644,7 +1659,7 @@ function createMultiplayerRoom() {
 
 function shareWhatsAppInvite() {
   const inviteUrl = window.location.origin + window.location.pathname + '?room=' + currentRoomCode;
-  const msg = `🏎️ Race with me on RaceX 3D! Tap to join my room: ${inviteUrl}`;
+  const msg = `🏎️ Race with me on RaceX 3D! Tap to join my race: ${inviteUrl}`;
   window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
@@ -1672,7 +1687,6 @@ function joinMultiplayerRoom(codeToJoin) {
   conn.on('data', (data) => handleNetworkMessage(conn.peer, data));
 }
 
-// Auto join if room is in URL query (?room=RX1234)
 window.addEventListener('load', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const roomParam = urlParams.get('room');
@@ -1894,7 +1908,6 @@ function updatePhysics(delta) {
     }
   });
 
-  // Broadcast position & race data in Multiplayer
   if (gameMode === 'multiplayer') {
     broadcastNetworkData({
       type: 'player_update',
@@ -1960,7 +1973,6 @@ function updateHUD() {
     gearEl.innerText = 'GEAR ' + gear;
   }
 
-  // Multiplayer Live Standings
   if (gameMode === 'multiplayer') {
     const list = [{ name: userData.name, dist: distanceDriven, isMe: true }];
     remotePlayerMeshes.forEach(rc => list.push({ name: rc.playerName, dist: rc.dist || 0, isMe: false }));
@@ -2030,7 +2042,16 @@ function restartCurrentGame() { closeAllModals(); initRace(); }
 
 /* --- UI MODAL LOGIC & GARAGE SETUP --- */
 function closeAllModals() { document.querySelectorAll('.screen').forEach(s => s.classList.add('hide')); }
-function closeModal(id) { document.getElementById(id).classList.add('hide'); document.getElementById('menuScreen').classList.remove('hide'); }
+function closeModal(id) {
+  document.getElementById(id).classList.add('hide');
+  if (isPlaying) {
+    // If playing, returning to game HUD
+    document.getElementById('hud').classList.add('active');
+    document.getElementById('topBtns').style.display = 'flex';
+  } else {
+    document.getElementById('menuScreen').classList.remove('hide');
+  }
+}
 
 function openProfileModal() {
   document.getElementById('accountNameInput').value = userData.name;
@@ -2075,8 +2096,14 @@ function openGarageModal() {
   CAR_DATABASE.forEach(car => {
     const card = document.createElement('div');
     card.className = `car-card ${userData.selectedCar === car.id ? 'selected' : ''}`;
-    card.innerHTML = `<div style="font-size:1.6rem">${car.icon}</div><div class="car-name">${car.name}</div><div style="font-size:0.72rem; color:#94a3b8">${car.topSpeed} km/h</div>`;
-    card.onclick = () => { userData.selectedCar = car.id; openGarageModal(); };
+    card.innerHTML = `<div style="font-size:1.8rem">${car.icon}</div><div class="car-name">${car.name}</div><div style="font-size:0.75rem; color:var(--gold); margin-top:2px;">Top: ${car.topSpeed} km/h</div><button class="btn-main ${userData.selectedCar === car.id ? 'btn-green' : 'btn-neon'}" style="margin-top:6px; padding:4px 8px; font-size:0.7rem; width:100%;">${userData.selectedCar === car.id ? '✓ SELECTED' : 'SELECT'}</button>`;
+    card.onclick = () => {
+      userData.selectedCar = car.id;
+      createPlayerVehicle();
+      saveUserData();
+      openGarageModal();
+      showNotification(`🚗 Selected: ${car.name}`);
+    };
     carContainer.appendChild(card);
   });
 
@@ -2086,7 +2113,13 @@ function openGarageModal() {
     const dot = document.createElement('div');
     dot.className = `color-dot ${userData.carColor === c.val ? 'active' : ''}`;
     dot.style.background = c.hex;
-    dot.onclick = () => { userData.carColor = c.val; openGarageModal(); };
+    dot.title = c.name;
+    dot.onclick = () => {
+      userData.carColor = c.val;
+      createPlayerVehicle();
+      saveUserData();
+      openGarageModal();
+    };
     colContainer.appendChild(dot);
   });
 
@@ -2096,7 +2129,13 @@ function openGarageModal() {
     const dot = document.createElement('div');
     dot.className = `color-dot ${userData.neonColor === n.val ? 'active' : ''}`;
     dot.style.background = n.hex;
-    dot.onclick = () => { userData.neonColor = n.val; openGarageModal(); };
+    dot.title = n.name;
+    dot.onclick = () => {
+      userData.neonColor = n.val;
+      createPlayerVehicle();
+      saveUserData();
+      openGarageModal();
+    };
     neonContainer.appendChild(dot);
   });
 
