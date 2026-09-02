@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#1e3a8a">
+<meta name="theme-color" content="#0a192f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>RaceX 3D — Real Supercar Racing & Multiplayer</title>
@@ -41,7 +41,7 @@
   }
 
   html, body {
-    background: #0f172a;
+    background: #0b1329;
     font-family: var(--font-body);
     color: #f1f5f9;
     overflow: hidden;
@@ -1087,11 +1087,11 @@ function handlePhotoUpload(event) {
   reader.readAsDataURL(file);
 }
 
-/* --- BRIGHT REALISTIC THREE.JS 3D SCENE --- */
+/* --- VIBRANT THREE.JS 3D SCENE --- */
 const canvas = document.getElementById('webgl-canvas');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x3a1c54);
-scene.fog = new THREE.FogExp2(0x3a1c54, 0.0016);
+scene.background = new THREE.Color(0x1e3a8a); // Beautiful Deep Sky Blue
+scene.fog = new THREE.Fog(0x1e3a8a, 120, 480);
 
 const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
@@ -1100,47 +1100,29 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-const ambientLight = new THREE.AmbientLight(0xfff5e6, 1.45);
+// Crystal Clear Bright Directional Lighting
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0xffeedd, 1.9);
-dirLight.position.set(60, 120, 50);
+const dirLight = new THREE.DirectionalLight(0xfffaed, 2.0);
+dirLight.position.set(50, 100, 50);
 dirLight.castShadow = true;
 scene.add(dirLight);
 
-const hemiLight = new THREE.HemisphereLight(0xffeedd, 0x334466, 0.95);
+const hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x1e293b, 1.0);
 scene.add(hemiLight);
 
-const skyGeo = new THREE.SphereGeometry(600, 32, 16);
-const skyMat = new THREE.MeshBasicMaterial({ color: 0x4a1e6d, side: THREE.BackSide });
-const skyDome = new THREE.Mesh(skyGeo, skyMat);
-scene.add(skyDome);
-
-// 3D Fluffy Clouds (Badal)
-const cloudGroup = new THREE.Group();
-const cloudGeo = new THREE.DodecahedronGeometry(14, 1);
-const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffe8d6, roughness: 0.9, opacity: 0.85, transparent: true });
-
-for (let i = 0; i < 20; i++) {
-  const puff = new THREE.Mesh(cloudGeo, cloudMat);
-  puff.position.set(-150 + Math.random() * 300, 60 + Math.random() * 40, -400 + Math.random() * 600);
-  puff.scale.set(1.5 + Math.random(), 0.8 + Math.random() * 0.4, 1.2 + Math.random());
-  cloudGroup.add(puff);
-}
-scene.add(cloudGroup);
-
 const LEVEL_THEMES = [
-  { name: 'LEVEL 1: SUNSET COAST & CITY', sky: 0x4a1e6d, fog: 0x4a1e6d, light: 0xffeedd },
-  { name: 'LEVEL 2: CANYON FOREST ROAD', sky: 0x225588, fog: 0x225588, light: 0xffffff },
-  { name: 'LEVEL 3: NEON CYBER METROPOLIS', sky: 0x1a264a, fog: 0x1a264a, light: 0xffeeaa },
-  { name: 'LEVEL 4: TOKYO TWILIGHT EXPRESS', sky: 0x3d144c, fog: 0x3d144c, light: 0x00f5ff }
+  { name: 'LEVEL 1: SUNSET COAST & CITY', sky: 0x1e3a8a, fog: 0x1e3a8a, light: 0xfffaed },
+  { name: 'LEVEL 2: CANYON FOREST ROAD', sky: 0x0f766e, fog: 0x0f766e, light: 0xffffff },
+  { name: 'LEVEL 3: NEON CYBER METROPOLIS', sky: 0x172554, fog: 0x172554, light: 0xffeeaa },
+  { name: 'LEVEL 4: TOKYO TWILIGHT EXPRESS', sky: 0x4c1d95, fog: 0x4c1d95, light: 0x00f5ff }
 ];
 
 function applyLevelTheme(lvlIdx) {
   const theme = LEVEL_THEMES[lvlIdx % LEVEL_THEMES.length];
   scene.background.setHex(theme.sky);
   scene.fog.color.setHex(theme.fog);
-  skyMat.color.setHex(theme.sky);
   dirLight.color.setHex(theme.light);
   document.getElementById('hudLevelBadge').innerText = theme.name;
 }
@@ -1201,7 +1183,7 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, neonHex = 0x00f5ff, ca
   spoiler.position.set(0, 1.28, 2.0);
   car.add(spoiler);
 
-  // Glowing Xenon LED Headlights
+  // Headlights
   const lightGeo = new THREE.BoxGeometry(0.42, 0.14, 0.1);
   const lightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const lLight = new THREE.Mesh(lightGeo, lightMat);
@@ -1293,13 +1275,13 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, neonHex = 0x00f5ff, ca
   car.nitroFlames = [lFire, rFire];
 
   if (isOncoming) {
-    car.rotation.y = Math.PI; // Face oncoming
+    car.rotation.y = Math.PI;
   }
 
   return car;
 }
 
-/* --- VIBRANT ROADSIDE & REALISTIC ARCHITECTURAL BUILDINGS --- */
+/* --- BULLETPROOF SOLID 3D HIGHWAY & REALISTIC BUILDINGS --- */
 const ROAD_WIDTH = 24;
 const LANES = 4;
 const LANE_WIDTH = ROAD_WIDTH / LANES;
@@ -1308,129 +1290,142 @@ const NUM_CHUNKS = 10;
 const chunks = [];
 
 function getRoadCurveX(zPos) {
-  return Math.sin(zPos * 0.005) * 20 + Math.cos(zPos * 0.002) * 12;
+  return Math.sin(zPos * 0.005) * 18 + Math.cos(zPos * 0.002) * 10;
 }
 
-const roadTextureCanvas = document.createElement('canvas');
-roadTextureCanvas.width = 512;
-roadTextureCanvas.height = 512;
-const rCtx = roadTextureCanvas.getContext('2d');
-rCtx.fillStyle = '#222d3d';
-rCtx.fillRect(0, 0, 512, 512);
+// Materials (Solid & Reliable)
+const asphaltMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8, metalness: 0.1 });
+const grassMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.9 });
+const yellowLineMat = new THREE.MeshBasicMaterial({ color: 0xffd60a });
+const whiteLineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+const curbMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.7 });
+const guardrailMat = new THREE.MeshStandardMaterial({ color: 0x00f5ff, emissive: 0x0088aa, metalness: 0.8 });
 
-// Center Divider (Double Solid Yellow Line)
-rCtx.strokeStyle = '#ffd60a';
-rCtx.lineWidth = 10;
-rCtx.beginPath(); rCtx.moveTo(250, 0); rCtx.lineTo(250, 512); rCtx.stroke();
-rCtx.beginPath(); rCtx.moveTo(262, 0); rCtx.lineTo(262, 512); rCtx.stroke();
+const buildingMats = [
+  new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.4, metalness: 0.6 }),
+  new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.3, metalness: 0.7 }),
+  new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.5, metalness: 0.5 }),
+  new THREE.MeshStandardMaterial({ color: 0x0f766e, roughness: 0.4, metalness: 0.6 })
+];
+const windowGlassMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+const warmWindowMat = new THREE.MeshBasicMaterial({ color: 0xfde047 });
 
-// Dashed White Lane Dividers
-rCtx.strokeStyle = '#ffffff';
-rCtx.lineWidth = 8;
-rCtx.setLineDash([35, 35]);
-[128, 384].forEach(x => {
-  rCtx.beginPath(); rCtx.moveTo(x, 0); rCtx.lineTo(x, 512); rCtx.stroke();
-});
-rCtx.setLineDash([]);
-
-// Outer Yellow Shoulder Lines
-rCtx.strokeStyle = '#ffd60a';
-rCtx.lineWidth = 14;
-rCtx.beginPath(); rCtx.moveTo(10, 0); rCtx.lineTo(10, 512); rCtx.stroke();
-rCtx.beginPath(); rCtx.moveTo(502, 0); rCtx.lineTo(502, 512); rCtx.stroke();
-
-const roadTexture = new THREE.CanvasTexture(roadTextureCanvas);
-roadTexture.wrapS = THREE.RepeatWrapping;
-roadTexture.wrapT = THREE.RepeatWrapping;
-roadTexture.repeat.set(1, 4);
-
-// Architectural Building Texture (Window Grid)
-const bTexCanvas = document.createElement('canvas');
-bTexCanvas.width = 256;
-bTexCanvas.height = 256;
-const bCtx = bTexCanvas.getContext('2d');
-bCtx.fillStyle = '#1e293b';
-bCtx.fillRect(0, 0, 256, 256);
-for (let y = 10; y < 256; y += 28) {
-  for (let x = 10; x < 256; x += 28) {
-    bCtx.fillStyle = Math.random() > 0.35 ? '#ffd60a' : '#00f5ff';
-    bCtx.globalAlpha = 0.85;
-    bCtx.fillRect(x, y, 16, 18);
-  }
-}
-bCtx.globalAlpha = 1.0;
-const buildingTexture = new THREE.CanvasTexture(bTexCanvas);
-buildingTexture.wrapS = THREE.RepeatWrapping;
-buildingTexture.wrapT = THREE.RepeatWrapping;
-buildingTexture.repeat.set(2, 6);
+const trunkMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.9 });
+const leavesMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.7 });
 
 function createCurvedChunk(zPos) {
   const group = new THREE.Group();
   group.position.z = zPos;
   group.position.x = getRoadCurveX(zPos);
 
-  const roadGeo = new THREE.PlaneGeometry(ROAD_WIDTH, CHUNK_LENGTH + 0.5);
-  const roadMat = new THREE.MeshStandardMaterial({ map: roadTexture, roughness: 0.7, metalness: 0.1 });
-  const roadMesh = new THREE.Mesh(roadGeo, roadMat);
-  roadMesh.rotation.x = -Math.PI / 2;
+  // 1. Surrounding Grass Terrain
+  const grassGeo = new THREE.BoxGeometry(220, 0.4, CHUNK_LENGTH + 0.5);
+  const grassMesh = new THREE.Mesh(grassGeo, grassMat);
+  grassMesh.position.y = -0.22;
+  group.add(grassMesh);
+
+  // 2. Solid Asphalt Road
+  const roadGeo = new THREE.BoxGeometry(ROAD_WIDTH, 0.2, CHUNK_LENGTH + 0.5);
+  const roadMesh = new THREE.Mesh(roadGeo, asphaltMat);
+  roadMesh.position.y = 0.0;
   roadMesh.receiveShadow = true;
   group.add(roadMesh);
 
-  // Sidewalks
-  const sideGeo = new THREE.BoxGeometry(4.5, 0.35, CHUNK_LENGTH + 0.5);
-  const sideMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 });
-  const leftWalk = new THREE.Mesh(sideGeo, sideMat);
-  leftWalk.position.set(-ROAD_WIDTH / 2 - 2.25, 0.18, 0);
-  group.add(leftWalk);
+  // 3. Center Double Yellow Line
+  const yLineGeo = new THREE.BoxGeometry(0.25, 0.05, CHUNK_LENGTH + 0.5);
+  const l1 = new THREE.Mesh(yLineGeo, yellowLineMat);
+  l1.position.set(-0.25, 0.12, 0);
+  const l2 = new THREE.Mesh(yLineGeo, yellowLineMat);
+  l2.position.set(0.25, 0.12, 0);
+  group.add(l1);
+  group.add(l2);
 
-  const rightWalk = new THREE.Mesh(sideGeo, sideMat);
-  rightWalk.position.set(ROAD_WIDTH / 2 + 2.25, 0.18, 0);
-  group.add(rightWalk);
+  // 4. Outer Shoulder Yellow Lines
+  const edgeLineGeo = new THREE.BoxGeometry(0.35, 0.05, CHUNK_LENGTH + 0.5);
+  const elL = new THREE.Mesh(edgeLineGeo, yellowLineMat);
+  elL.position.set(-ROAD_WIDTH / 2 + 0.35, 0.12, 0);
+  const elR = new THREE.Mesh(edgeLineGeo, yellowLineMat);
+  elR.position.set(ROAD_WIDTH / 2 - 0.35, 0.12, 0);
+  group.add(elL);
+  group.add(elR);
 
-  // Guardrails
-  const railGeo = new THREE.BoxGeometry(0.3, 0.8, CHUNK_LENGTH + 0.5);
-  const railMat = new THREE.MeshStandardMaterial({ color: 0x00f5ff, emissive: 0x00aacc, metalness: 0.8 });
-  const lRail = new THREE.Mesh(railGeo, railMat);
-  lRail.position.set(-ROAD_WIDTH / 2 - 0.2, 0.5, 0);
-  group.add(lRail);
-  const rRail = new THREE.Mesh(railGeo, railMat);
-  rRail.position.set(ROAD_WIDTH / 2 + 0.2, 0.5, 0);
-  group.add(rRail);
+  // 5. White Dashed Stripes (Clean procedural boxes)
+  const stripeGeo = new THREE.BoxGeometry(0.2, 0.04, 6);
+  for (let s = -CHUNK_LENGTH / 2 + 5; s < CHUNK_LENGTH / 2; s += 14) {
+    const sLeft = new THREE.Mesh(stripeGeo, whiteLineMat);
+    sLeft.position.set(-LANE_WIDTH, 0.12, s);
+    const sRight = new THREE.Mesh(stripeGeo, whiteLineMat);
+    sRight.position.set(LANE_WIDTH, 0.12, s);
+    group.add(sLeft);
+    group.add(sRight);
+  }
 
-  // Realistic Modern Architectural Towers (Nicely Spaced)
+  // 6. Sidewalk Curbs
+  const curbGeo = new THREE.BoxGeometry(3.5, 0.35, CHUNK_LENGTH + 0.5);
+  const cL = new THREE.Mesh(curbGeo, curbMat);
+  cL.position.set(-ROAD_WIDTH / 2 - 1.75, 0.18, 0);
+  const cR = new THREE.Mesh(curbGeo, curbMat);
+  cR.position.set(ROAD_WIDTH / 2 + 1.75, 0.18, 0);
+  group.add(cL);
+  group.add(cR);
+
+  // 7. Guardrails
+  const railGeo = new THREE.BoxGeometry(0.25, 0.7, CHUNK_LENGTH + 0.5);
+  const rL = new THREE.Mesh(railGeo, guardrailMat);
+  rL.position.set(-ROAD_WIDTH / 2 - 0.15, 0.45, 0);
+  const rR = new THREE.Mesh(railGeo, guardrailMat);
+  rR.position.set(ROAD_WIDTH / 2 + 0.15, 0.45, 0);
+  group.add(rL);
+  group.add(rR);
+
+  // 8. Modern Architectural Towers with Realistic Windows
   for (let i = 0; i < 2; i++) {
-    const bHeight = 40 + (i % 2) * 25;
-    const bGeo = new THREE.BoxGeometry(16, bHeight, 22);
-    const bMat = new THREE.MeshStandardMaterial({ map: buildingTexture, roughness: 0.4, metalness: 0.5 });
-    
-    const bL = new THREE.Mesh(bGeo, bMat);
-    bL.position.set(-ROAD_WIDTH / 2 - 24, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 15);
-    group.add(bL);
+    const bHeight = 35 + (i * 20);
+    const bGeo = new THREE.BoxGeometry(18, bHeight, 26);
+    const bMat = buildingMats[(i + Math.floor(zPos / 100)) % buildingMats.length];
 
-    const bR = new THREE.Mesh(bGeo, bMat);
-    bR.position.set(ROAD_WIDTH / 2 + 24, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 15);
-    group.add(bR);
+    // Left Tower
+    const towerL = new THREE.Mesh(bGeo, bMat);
+    towerL.position.set(-ROAD_WIDTH / 2 - 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 20);
+    group.add(towerL);
 
-    // Realistic Nature Trees on Sidewalk
-    const trunkGeo = new THREE.CylinderGeometry(0.3, 0.4, 6, 8);
-    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x653b1b, roughness: 0.9 });
-    const trunkL = new THREE.Mesh(trunkGeo, trunkMat);
-    trunkL.position.set(-ROAD_WIDTH / 2 - 3.2, 3, -CHUNK_LENGTH / 2 + i * 50 + 35);
-    group.add(trunkL);
+    // Right Tower
+    const towerR = new THREE.Mesh(bGeo, bMat);
+    towerR.position.set(ROAD_WIDTH / 2 + 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 20);
+    group.add(towerR);
 
-    const leavesGeo = new THREE.ConeGeometry(2.4, 5, 8);
-    const leavesMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 });
-    const leavesL = new THREE.Mesh(leavesGeo, leavesMat);
-    leavesL.position.set(-ROAD_WIDTH / 2 - 3.2, 6.8, -CHUNK_LENGTH / 2 + i * 50 + 35);
-    group.add(leavesL);
+    // Glowing Windows
+    const winGeo = new THREE.BoxGeometry(1.5, 2.0, 0.1);
+    for (let f = 4; f < bHeight - 4; f += 6) {
+      const wL = new THREE.Mesh(winGeo, (f % 12 === 0) ? warmWindowMat : windowGlassMat);
+      wL.position.set(-ROAD_WIDTH / 2 - 12.8, f, -CHUNK_LENGTH / 2 + i * 50 + 20);
+      wL.rotation.y = Math.PI / 2;
+      group.add(wL);
 
-    const trunkR = new THREE.Mesh(trunkGeo, trunkMat);
-    trunkR.position.set(ROAD_WIDTH / 2 + 3.2, 3, -CHUNK_LENGTH / 2 + i * 50 + 35);
-    group.add(trunkR);
+      const wR = new THREE.Mesh(winGeo, (f % 12 === 0) ? warmWindowMat : windowGlassMat);
+      wR.position.set(ROAD_WIDTH / 2 + 12.8, f, -CHUNK_LENGTH / 2 + i * 50 + 20);
+      wR.rotation.y = -Math.PI / 2;
+      group.add(wR);
+    }
 
-    const leavesR = new THREE.Mesh(leavesGeo, leavesMat);
-    leavesR.position.set(ROAD_WIDTH / 2 + 3.2, 6.8, -CHUNK_LENGTH / 2 + i * 50 + 35);
-    group.add(leavesR);
+    // Roadside Nature Trees
+    const trunkGeo = new THREE.CylinderGeometry(0.35, 0.45, 5.5, 8);
+    const tL = new THREE.Mesh(trunkGeo, trunkMat);
+    tL.position.set(-ROAD_WIDTH / 2 - 2.8, 2.75, -CHUNK_LENGTH / 2 + i * 50 + 40);
+    group.add(tL);
+
+    const foliageGeo = new THREE.ConeGeometry(2.4, 4.8, 8);
+    const fL = new THREE.Mesh(foliageGeo, leavesMat);
+    fL.position.set(-ROAD_WIDTH / 2 - 2.8, 6.2, -CHUNK_LENGTH / 2 + i * 50 + 40);
+    group.add(fL);
+
+    const tR = new THREE.Mesh(trunkGeo, trunkMat);
+    tR.position.set(ROAD_WIDTH / 2 + 2.8, 2.75, -CHUNK_LENGTH / 2 + i * 50 + 40);
+    group.add(tR);
+
+    const fR = new THREE.Mesh(foliageGeo, leavesMat);
+    fR.position.set(ROAD_WIDTH / 2 + 2.8, 6.2, -CHUNK_LENGTH / 2 + i * 50 + 40);
+    group.add(fR);
   }
 
   scene.add(group);
@@ -1470,7 +1465,7 @@ function spawnAiRivals() {
   });
 }
 
-/* --- BALANCED TRAFFIC (REDUCED COUNT & GENTLE ONCOMING SPEED) --- */
+/* --- BALANCED TWO-WAY TRAFFIC --- */
 const trafficVehicles = [];
 const pickupItems = [];
 
@@ -1479,12 +1474,11 @@ function spawnTraffic() {
   trafficVehicles.length = 0;
   const colors = [0xff1744, 0xffd60a, 0x0099ff, 0x00ff88, 0xff6b35, 0xb026ff, 0xffffff, 0x3b82f6];
 
-  // Reduced down to 7 well-spaced cars with comfortable gaps!
   for (let i = 0; i < 7; i++) {
     const lane = (i % 2 === 0) ? (i % 4 < 2 ? 0 : 1) : (i % 4 < 2 ? 2 : 3);
     const isOncoming = (lane < 2);
     const carMesh = createRealisticSupercarMesh(colors[i % colors.length], 0x000000, 'apex_gt', isOncoming);
-    const z = -60 - i * 65; // Wide 65m gaps!
+    const z = -60 - i * 65;
     const curveX = getRoadCurveX(z);
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
     carMesh.position.set(x, 0, z);
@@ -1493,7 +1487,6 @@ function spawnTraffic() {
       mesh: carMesh,
       lane,
       isOncoming,
-      // Very gentle realistic oncoming speed so player can easily dodge!
       speed: isOncoming ? (0.35 + Math.random() * 0.15) : (0.55 + Math.random() * 0.2)
     });
   }
@@ -1519,7 +1512,7 @@ function spawnPickups() {
     const mesh = new THREE.Mesh(geo, mat);
     const z = -25 - i * 40;
     const curveX = getRoadCurveX(z);
-    const lane = 2 + Math.floor(Math.random() * 2); // Pickups mainly on player's side
+    const lane = 2 + Math.floor(Math.random() * 2);
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
     mesh.position.set(x, 0.95, z);
     scene.add(mesh);
@@ -1844,7 +1837,7 @@ function updatePhysics(delta) {
     playerSteer *= 0.85;
   }
 
-  // Off-road tree & barrier collision
+  // Off-road collision check
   const offRoadOffset = Math.abs(playerX - roadCenterX);
   if (offRoadOffset > ROAD_WIDTH / 2 + 1.8) {
     handleCrash('💥 CRASHED INTO TREE!');
@@ -1874,12 +1867,6 @@ function updatePhysics(delta) {
   });
 
   sound.updateEngine(playerSpeed, playerMaxSpeed, keys.forward || keys.backward, isReverse);
-
-  // Animate drifting clouds (Badal)
-  cloudGroup.position.z = playerZ * 0.85;
-  cloudGroup.children.forEach(puff => {
-    puff.rotation.y += delta * 0.05;
-  });
 
   chunks.forEach(chunk => {
     if (chunk.position.z > playerZ + CHUNK_LENGTH) {
@@ -1916,7 +1903,6 @@ function updatePhysics(delta) {
     const cX = getRoadCurveX(t.mesh.position.z);
     t.mesh.position.x = cX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + t.lane * LANE_WIDTH;
 
-    // Respawn with large distances
     if (t.mesh.position.z > playerZ + 40) {
       t.mesh.position.z = playerZ - 280 - Math.random() * 90;
       t.lane = t.isOncoming ? (Math.random() < 0.5 ? 0 : 1) : (Math.random() < 0.5 ? 2 : 3);
@@ -2202,7 +2188,6 @@ function animate(time) {
   lastTime = time;
 
   updatePhysics(delta);
-  skyDome.rotation.y += delta * 0.01;
   renderer.render(scene, camera);
 }
 requestAnimationFrame(animate);
