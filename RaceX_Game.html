@@ -573,12 +573,12 @@
       <div class="mode-card" onclick="startSinglePlayer('rival')">
         <div class="mode-icon">🏁</div>
         <div class="mode-title">AI Rival Championship</div>
-        <div class="mode-desc">Race against active AI supercars (Ferrari, Lamborghini, Bugatti, Porsche)!</div>
+        <div class="mode-desc">Race against balanced AI supercars (Ferrari, Lamborghini, Bugatti, Porsche)!</div>
       </div>
       <div class="mode-card" onclick="startSinglePlayer('traffic')">
         <div class="mode-icon">🛣️</div>
-        <div class="mode-title">Two-Way Highway Rush</div>
-        <div class="mode-desc">Two-way oncoming traffic with high-speed overtakes and sunset scenery!</div>
+        <div class="mode-title">Scenic Highway Rush</div>
+        <div class="mode-desc">Balanced two-way traffic, wide overtaking gaps, and realistic architecture!</div>
       </div>
       <div class="mode-card" onclick="openMultiplayerModal()">
         <div class="mode-icon">👥</div>
@@ -1201,7 +1201,7 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, neonHex = 0x00f5ff, ca
   spoiler.position.set(0, 1.28, 2.0);
   car.add(spoiler);
 
-  // Glowing Xenon LED Headlights (Super Bright on Oncoming cars!)
+  // Glowing Xenon LED Headlights
   const lightGeo = new THREE.BoxGeometry(0.42, 0.14, 0.1);
   const lightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const lLight = new THREE.Mesh(lightGeo, lightMat);
@@ -1293,15 +1293,15 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, neonHex = 0x00f5ff, ca
   car.nitroFlames = [lFire, rFire];
 
   if (isOncoming) {
-    car.rotation.y = Math.PI; // Face oncoming towards the player!
+    car.rotation.y = Math.PI; // Face oncoming
   }
 
   return car;
 }
 
-/* --- VIBRANT ROADSIDE WITH TWO-WAY ROAD & TREES --- */
+/* --- VIBRANT ROADSIDE & REALISTIC ARCHITECTURAL BUILDINGS --- */
 const ROAD_WIDTH = 24;
-const LANES = 4; // Lanes 0, 1 are Oncoming (Opposite side), Lanes 2, 3 are Same Direction
+const LANES = 4;
 const LANE_WIDTH = ROAD_WIDTH / LANES;
 const CHUNK_LENGTH = 100;
 const NUM_CHUNKS = 10;
@@ -1318,7 +1318,7 @@ const rCtx = roadTextureCanvas.getContext('2d');
 rCtx.fillStyle = '#222d3d';
 rCtx.fillRect(0, 0, 512, 512);
 
-// Center Divider Line (Double Solid Yellow Line for Two-Way Highway)
+// Center Divider (Double Solid Yellow Line)
 rCtx.strokeStyle = '#ffd60a';
 rCtx.lineWidth = 10;
 rCtx.beginPath(); rCtx.moveTo(250, 0); rCtx.lineTo(250, 512); rCtx.stroke();
@@ -1343,6 +1343,26 @@ const roadTexture = new THREE.CanvasTexture(roadTextureCanvas);
 roadTexture.wrapS = THREE.RepeatWrapping;
 roadTexture.wrapT = THREE.RepeatWrapping;
 roadTexture.repeat.set(1, 4);
+
+// Architectural Building Texture (Window Grid)
+const bTexCanvas = document.createElement('canvas');
+bTexCanvas.width = 256;
+bTexCanvas.height = 256;
+const bCtx = bTexCanvas.getContext('2d');
+bCtx.fillStyle = '#1e293b';
+bCtx.fillRect(0, 0, 256, 256);
+for (let y = 10; y < 256; y += 28) {
+  for (let x = 10; x < 256; x += 28) {
+    bCtx.fillStyle = Math.random() > 0.35 ? '#ffd60a' : '#00f5ff';
+    bCtx.globalAlpha = 0.85;
+    bCtx.fillRect(x, y, 16, 18);
+  }
+}
+bCtx.globalAlpha = 1.0;
+const buildingTexture = new THREE.CanvasTexture(bTexCanvas);
+buildingTexture.wrapS = THREE.RepeatWrapping;
+buildingTexture.wrapT = THREE.RepeatWrapping;
+buildingTexture.repeat.set(2, 6);
 
 function createCurvedChunk(zPos) {
   const group = new THREE.Group();
@@ -1377,54 +1397,39 @@ function createCurvedChunk(zPos) {
   rRail.position.set(ROAD_WIDTH / 2 + 0.2, 0.5, 0);
   group.add(rRail);
 
-  // Buildings & Nature Trees
-  const buildingColors = [0x1e3a8a, 0x3730a3, 0x065f46, 0x831843, 0x1f2937];
-  const neonLightColors = [0x00f5ff, 0xffd60a, 0xff2d55, 0x00ff88, 0xb026ff];
-
-  for (let i = 0; i < 3; i++) {
-    const bHeight = 35 + Math.random() * 45;
-    const bGeo = new THREE.BoxGeometry(18, bHeight, 26);
-    const bMat = new THREE.MeshStandardMaterial({ color: buildingColors[i % buildingColors.length], roughness: 0.3, metalness: 0.6 });
+  // Realistic Modern Architectural Towers (Nicely Spaced)
+  for (let i = 0; i < 2; i++) {
+    const bHeight = 40 + (i % 2) * 25;
+    const bGeo = new THREE.BoxGeometry(16, bHeight, 22);
+    const bMat = new THREE.MeshStandardMaterial({ map: buildingTexture, roughness: 0.4, metalness: 0.5 });
     
     const bL = new THREE.Mesh(bGeo, bMat);
-    bL.position.set(-ROAD_WIDTH / 2 - 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 36);
+    bL.position.set(-ROAD_WIDTH / 2 - 24, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 15);
     group.add(bL);
 
-    const signGeo = new THREE.PlaneGeometry(12, 4);
-    const signMat = new THREE.MeshBasicMaterial({ color: neonLightColors[i % neonLightColors.length] });
-    const signL = new THREE.Mesh(signGeo, signMat);
-    signL.position.set(-ROAD_WIDTH / 2 - 12.8, 16 + i * 6, -CHUNK_LENGTH / 2 + i * 36);
-    signL.rotation.y = Math.PI / 2;
-    group.add(signL);
-
     const bR = new THREE.Mesh(bGeo, bMat);
-    bR.position.set(ROAD_WIDTH / 2 + 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 36);
+    bR.position.set(ROAD_WIDTH / 2 + 24, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 15);
     group.add(bR);
 
-    const signR = new THREE.Mesh(signGeo, signMat);
-    signR.position.set(ROAD_WIDTH / 2 + 12.8, 16 + i * 6, -CHUNK_LENGTH / 2 + i * 36);
-    signR.rotation.y = -Math.PI / 2;
-    group.add(signR);
-
-    // Realistic Nature Trees
-    const trunkGeo = new THREE.CylinderGeometry(0.35, 0.45, 6, 8);
+    // Realistic Nature Trees on Sidewalk
+    const trunkGeo = new THREE.CylinderGeometry(0.3, 0.4, 6, 8);
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x653b1b, roughness: 0.9 });
     const trunkL = new THREE.Mesh(trunkGeo, trunkMat);
-    trunkL.position.set(-ROAD_WIDTH / 2 - 3.2, 3, -CHUNK_LENGTH / 2 + i * 36 + 12);
+    trunkL.position.set(-ROAD_WIDTH / 2 - 3.2, 3, -CHUNK_LENGTH / 2 + i * 50 + 35);
     group.add(trunkL);
 
-    const leavesGeo = new THREE.ConeGeometry(2.6, 5, 8);
+    const leavesGeo = new THREE.ConeGeometry(2.4, 5, 8);
     const leavesMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 });
     const leavesL = new THREE.Mesh(leavesGeo, leavesMat);
-    leavesL.position.set(-ROAD_WIDTH / 2 - 3.2, 6.8, -CHUNK_LENGTH / 2 + i * 36 + 12);
+    leavesL.position.set(-ROAD_WIDTH / 2 - 3.2, 6.8, -CHUNK_LENGTH / 2 + i * 50 + 35);
     group.add(leavesL);
 
     const trunkR = new THREE.Mesh(trunkGeo, trunkMat);
-    trunkR.position.set(ROAD_WIDTH / 2 + 3.2, 3, -CHUNK_LENGTH / 2 + i * 36 + 12);
+    trunkR.position.set(ROAD_WIDTH / 2 + 3.2, 3, -CHUNK_LENGTH / 2 + i * 50 + 35);
     group.add(trunkR);
 
     const leavesR = new THREE.Mesh(leavesGeo, leavesMat);
-    leavesR.position.set(ROAD_WIDTH / 2 + 3.2, 6.8, -CHUNK_LENGTH / 2 + i * 36 + 12);
+    leavesR.position.set(ROAD_WIDTH / 2 + 3.2, 6.8, -CHUNK_LENGTH / 2 + i * 50 + 35);
     group.add(leavesR);
   }
 
@@ -1436,12 +1441,12 @@ for (let i = 0; i < NUM_CHUNKS; i++) {
   chunks.push(createCurvedChunk(-i * CHUNK_LENGTH));
 }
 
-/* --- ACTIVE AI RACING RIVALS SPAWNED RIGHT AHEAD --- */
+/* --- ACTIVE AI RACING RIVALS --- */
 const AI_RIVALS_DATA = [
-  { name: 'Ferrari SF90 (Alex)', carId: 'apex_gt', color: 0xff1744, speedRatio: 0.98, lane: 2, zOffset: -12 },
-  { name: 'Lambo SVJ (Viper)', carId: 'venom_v12', color: 0xffd60a, speedRatio: 1.02, lane: 3, zOffset: -28 },
-  { name: 'Bugatti (Shadow)', carId: 'bugatti_chiron', color: 0x0099ff, speedRatio: 1.05, lane: 2, zOffset: -45 },
-  { name: 'Porsche (SpeedFox)', carId: 'porsche_gt3', color: 0x00ff88, speedRatio: 0.95, lane: 3, zOffset: -65 }
+  { name: 'Ferrari SF90 (Alex)', carId: 'apex_gt', color: 0xff1744, speedRatio: 0.96, lane: 2, zOffset: -18 },
+  { name: 'Lambo SVJ (Viper)', carId: 'venom_v12', color: 0xffd60a, speedRatio: 1.0, lane: 3, zOffset: -38 },
+  { name: 'Bugatti (Shadow)', carId: 'bugatti_chiron', color: 0x0099ff, speedRatio: 1.03, lane: 2, zOffset: -65 },
+  { name: 'Porsche (SpeedFox)', carId: 'porsche_gt3', color: 0x00ff88, speedRatio: 0.94, lane: 3, zOffset: -95 }
 ];
 const aiRivalMeshes = [];
 
@@ -1465,7 +1470,7 @@ function spawnAiRivals() {
   });
 }
 
-/* --- TWO-WAY TRAFFIC & OPPOSITE ONCOMING CARS --- */
+/* --- BALANCED TRAFFIC (REDUCED COUNT & GENTLE ONCOMING SPEED) --- */
 const trafficVehicles = [];
 const pickupItems = [];
 
@@ -1474,12 +1479,12 @@ function spawnTraffic() {
   trafficVehicles.length = 0;
   const colors = [0xff1744, 0xffd60a, 0x0099ff, 0x00ff88, 0xff6b35, 0xb026ff, 0xffffff, 0x3b82f6];
 
-  for (let i = 0; i < 18; i++) {
-    // Lanes 0, 1 are OPPOSITE ONCOMING (driving towards player), Lanes 2, 3 are Same Direction
-    const lane = i % LANES;
+  // Reduced down to 7 well-spaced cars with comfortable gaps!
+  for (let i = 0; i < 7; i++) {
+    const lane = (i % 2 === 0) ? (i % 4 < 2 ? 0 : 1) : (i % 4 < 2 ? 2 : 3);
     const isOncoming = (lane < 2);
     const carMesh = createRealisticSupercarMesh(colors[i % colors.length], 0x000000, 'apex_gt', isOncoming);
-    const z = -45 - i * 32;
+    const z = -60 - i * 65; // Wide 65m gaps!
     const curveX = getRoadCurveX(z);
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
     carMesh.position.set(x, 0, z);
@@ -1488,7 +1493,8 @@ function spawnTraffic() {
       mesh: carMesh,
       lane,
       isOncoming,
-      speed: isOncoming ? (1.1 + Math.random() * 0.5) : (0.75 + Math.random() * 0.4)
+      // Very gentle realistic oncoming speed so player can easily dodge!
+      speed: isOncoming ? (0.35 + Math.random() * 0.15) : (0.55 + Math.random() * 0.2)
     });
   }
 }
@@ -1498,7 +1504,7 @@ function spawnPickups() {
   pickupItems.length = 0;
   const types = ['gold', 'gold', 'silver', 'silver', 'iron', 'diamond'];
 
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 14; i++) {
     const type = types[Math.floor(Math.random() * types.length)];
     let geo, mat;
     if (type === 'diamond') {
@@ -1511,9 +1517,9 @@ function spawnPickups() {
       mat = new THREE.MeshStandardMaterial({ color: colors[type], metalness: 0.9, roughness: 0.15, emissive: type === 'gold' ? 0x886600 : 0x000000 });
     }
     const mesh = new THREE.Mesh(geo, mat);
-    const z = -20 - i * 35;
+    const z = -25 - i * 40;
     const curveX = getRoadCurveX(z);
-    const lane = Math.floor(Math.random() * LANES);
+    const lane = 2 + Math.floor(Math.random() * 2); // Pickups mainly on player's side
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
     mesh.position.set(x, 0.95, z);
     scene.add(mesh);
@@ -1899,25 +1905,23 @@ function updatePhysics(delta) {
     }
   });
 
-  // Two-Way Highway Traffic (Opposite & Same Direction)
+  // Balanced Highway Traffic
   trafficVehicles.forEach(t => {
     if (t.isOncoming) {
-      // Moves towards the player (opposite side)
-      t.mesh.position.z += t.speed * 1.5;
+      t.mesh.position.z += t.speed;
     } else {
-      // Moves in same direction as player
       t.mesh.position.z -= t.speed;
     }
 
     const cX = getRoadCurveX(t.mesh.position.z);
     t.mesh.position.x = cX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + t.lane * LANE_WIDTH;
 
-    // Respawn oncoming cars if they go behind player
-    if (t.mesh.position.z > playerZ + 30) {
-      t.mesh.position.z = playerZ - 240 - Math.random() * 80;
+    // Respawn with large distances
+    if (t.mesh.position.z > playerZ + 40) {
+      t.mesh.position.z = playerZ - 280 - Math.random() * 90;
       t.lane = t.isOncoming ? (Math.random() < 0.5 ? 0 : 1) : (Math.random() < 0.5 ? 2 : 3);
-    } else if (t.mesh.position.z < playerZ - 320) {
-      t.mesh.position.z = playerZ - 30;
+    } else if (t.mesh.position.z < playerZ - 360) {
+      t.mesh.position.z = playerZ - 40;
     }
 
     const dx = Math.abs(t.mesh.position.x - playerX);
@@ -1931,9 +1935,9 @@ function updatePhysics(delta) {
   pickupItems.forEach(item => {
     item.mesh.rotation.y += delta * 3;
     if (item.mesh.position.z > playerZ + 20) {
-      item.mesh.position.z = playerZ - 220 - Math.random() * 60;
+      item.mesh.position.z = playerZ - 240 - Math.random() * 60;
       const cX = getRoadCurveX(item.mesh.position.z);
-      item.mesh.position.x = cX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + Math.floor(Math.random() * LANES) * LANE_WIDTH;
+      item.mesh.position.x = cX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + (2 + Math.floor(Math.random() * 2)) * LANE_WIDTH;
     }
     const distToItem = item.mesh.position.distanceTo(playerCarMesh.position);
     if (distToItem < 2.2) {
