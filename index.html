@@ -34,7 +34,7 @@
   }
 
   html, body {
-    background: #0284c7;
+    background: #38bdf8;
     font-family: var(--font-body);
     color: #ffffff;
     overflow: hidden;
@@ -351,7 +351,7 @@
   }
   #gameNotif.show { opacity: 1; }
 
-  /* Fully Responsive Mobile Touch Controls */
+  /* Responsive Touch Controls */
   #mobileControls {
     position: fixed;
     bottom: clamp(12px, 3vw, 22px);
@@ -454,8 +454,8 @@
       </div>
       <div class="mode-card" onclick="startSinglePlayer('traffic')">
         <div class="mode-icon">🛣️</div>
-        <div class="mode-title">Highway Rush</div>
-        <div class="mode-desc">High speed traffic overtaking with realistic 3D graphics!</div>
+        <div class="mode-title">Endless Highway</div>
+        <div class="mode-desc">Infinite road with smooth curves, horizon mountains & music!</div>
       </div>
       <div class="mode-card" onclick="openMultiplayerModal()">
         <div class="mode-icon">👥</div>
@@ -629,7 +629,7 @@
   </div>
 </div>
 
-<!-- ================= 3D ENGINE SCRIPT ================= -->
+<!-- ================= 3D RACING ENGINE SCRIPT ================= -->
 <script>
 /* --- PRO WEB AUDIO SYNTHESIZER --- */
 class SoundEngine {
@@ -832,76 +832,72 @@ function handlePhotoUpload(event) {
   reader.readAsDataURL(file);
 }
 
-/* --- ULTRA BRIGHT 3D GRAPHICS SCENE --- */
+/* --- ULTRA BRIGHT 3D GRAPHICS SCENE & INFINITE HORIZON --- */
 const canvas = document.getElementById('webgl-canvas');
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x38bdf8); // Sunny Sky Blue
 
-// Bright Sunny Sky & Lighting
-scene.background = new THREE.Color(0x38bdf8); // Crystal Blue Sky
-
-const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 2000);
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// Ambient & Sun Light
+// Ambient & Sunlight
 const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
 scene.add(ambientLight);
 
 const sunLight = new THREE.DirectionalLight(0xfffaed, 2.2);
-sunLight.position.set(40, 80, 40);
+sunLight.position.set(40, 100, 40);
 scene.add(sunLight);
 
-// Distant City Skyline & Mountains
-for (let m = 0; m < 20; m++) {
-  const bHeight = 40 + Math.random() * 60;
-  const bGeo = new THREE.BoxGeometry(25, bHeight, 25);
-  const bMat = new THREE.MeshBasicMaterial({ color: 0x0284c7 });
-  const bgBldg = new THREE.Mesh(bGeo, bMat);
-  bgBldg.position.set(-250 + m * 26, bHeight / 2 - 10, -280 - Math.random() * 80);
-  scene.add(bgBldg);
+// Infinite Follow Horizon Group (Mountains + Sky Backdrop)
+const horizonGroup = new THREE.Group();
+const mMat1 = new THREE.MeshBasicMaterial({ color: 0x0284c7 });
+const mMat2 = new THREE.MeshBasicMaterial({ color: 0x0369a1 });
+
+for (let m = 0; m < 28; m++) {
+  const mHeight = 80 + (m % 5) * 30;
+  const mGeo = new THREE.ConeGeometry(50 + (m % 3) * 20, mHeight, 5);
+  const mountain = new THREE.Mesh(mGeo, (m % 2 === 0) ? mMat1 : mMat2);
+  mountain.position.set(-450 + m * 34, mHeight / 2 - 20, -500 - (m % 4) * 50);
+  horizonGroup.add(mountain);
 }
+scene.add(horizonGroup);
 
 /* --- DETAILED 3D SUPERCAR MESH --- */
 function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt', isOncoming = false) {
   const car = new THREE.Group();
 
-  // Chassis
   const chassisGeo = new THREE.BoxGeometry(2.1, 0.24, 4.6);
   const chassisMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
   const chassis = new THREE.Mesh(chassisGeo, chassisMat);
   chassis.position.y = 0.32;
   car.add(chassis);
 
-  // Body
   const bodyGeo = new THREE.BoxGeometry(2.05, 0.54, 4.4);
   const bodyMat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.2, metalness: 0.8 });
   const body = new THREE.Mesh(bodyGeo, bodyMat);
   body.position.y = 0.64;
   car.add(body);
 
-  // Hood
   const hoodGeo = new THREE.BoxGeometry(1.92, 0.22, 1.45);
   const hood = new THREE.Mesh(hoodGeo, bodyMat);
   hood.position.set(0, 0.67, -1.4);
   hood.rotation.x = 0.14;
   car.add(hood);
 
-  // Cockpit
   const cabinGeo = new THREE.BoxGeometry(1.64, 0.52, 2.1);
   const glassMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
   const cabin = new THREE.Mesh(cabinGeo, glassMat);
   cabin.position.set(0, 1.08, -0.15);
   car.add(cabin);
 
-  // Spoiler
   const spoilerGeo = new THREE.BoxGeometry(1.95, 0.08, 0.45);
   const spoilerMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
   const spoiler = new THREE.Mesh(spoilerGeo, spoilerMat);
   spoiler.position.set(0, 1.28, 2.0);
   car.add(spoiler);
 
-  // Headlights
   const lightGeo = new THREE.BoxGeometry(0.42, 0.14, 0.1);
   const lightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const lLight = new THREE.Mesh(lightGeo, lightMat);
@@ -911,7 +907,6 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   car.add(lLight);
   car.add(rLight);
 
-  // Taillights
   const tailMat = new THREE.MeshBasicMaterial({ color: 0xff1744 });
   const lTail = new THREE.Mesh(lightGeo, tailMat);
   lTail.position.set(-0.72, 0.67, 2.26);
@@ -920,7 +915,6 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   car.add(lTail);
   car.add(rTail);
 
-  // Wheels
   const wheelGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.35, 16);
   wheelGeo.rotateZ(Math.PI / 2);
   const wheelMat = new THREE.MeshBasicMaterial({ color: 0x18181b });
@@ -941,7 +935,6 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
     car.wheels.push(wGroup);
   });
 
-  // Nitro Flames
   const fireGeo = new THREE.ConeGeometry(0.22, 1.0, 8);
   fireGeo.rotateX(Math.PI / 2);
   const fireMat = new THREE.MeshBasicMaterial({ color: 0x00f5ff, transparent: true, opacity: 0 });
@@ -958,19 +951,18 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   return car;
 }
 
-/* --- SOLID 3D HIGHWAY & BUILDINGS (100% CLEAR VISIBILITY) --- */
+/* --- SEAMLESS INFINITE 3D HIGHWAY (16 CHUNKS = 1600 METERS AHEAD) --- */
 const ROAD_WIDTH = 24;
 const LANES = 4;
 const LANE_WIDTH = ROAD_WIDTH / LANES;
 const CHUNK_LENGTH = 100;
-const NUM_CHUNKS = 8;
+const NUM_CHUNKS = 16;
 const chunks = [];
 
 function getRoadCurveX(zPos) {
-  return Math.sin(zPos * 0.004) * 16;
+  return Math.sin(zPos * 0.003) * 14;
 }
 
-// Crisp Basic & Standard Materials
 const roadMat = new THREE.MeshBasicMaterial({ color: 0x1e293b });
 const grassMat = new THREE.MeshBasicMaterial({ color: 0x16a34a });
 const yellowLineMat = new THREE.MeshBasicMaterial({ color: 0xffd60a });
@@ -994,21 +986,21 @@ function createCurvedChunk(zPos) {
   group.position.x = getRoadCurveX(zPos);
 
   // 1. Bright Grass Terrain
-  const grassGeo = new THREE.PlaneGeometry(240, CHUNK_LENGTH + 1);
+  const grassGeo = new THREE.PlaneGeometry(320, CHUNK_LENGTH + 2);
   grassGeo.rotateX(-Math.PI / 2);
   const grass = new THREE.Mesh(grassGeo, grassMat);
   grass.position.y = -0.05;
   group.add(grass);
 
   // 2. Solid Road Surface
-  const roadGeo = new THREE.PlaneGeometry(ROAD_WIDTH, CHUNK_LENGTH + 1);
+  const roadGeo = new THREE.PlaneGeometry(ROAD_WIDTH, CHUNK_LENGTH + 2);
   roadGeo.rotateX(-Math.PI / 2);
   const road = new THREE.Mesh(roadGeo, roadMat);
   road.position.y = 0.0;
   group.add(road);
 
   // 3. Double Center Yellow Lines
-  const yLineGeo = new THREE.PlaneGeometry(0.3, CHUNK_LENGTH + 1);
+  const yLineGeo = new THREE.PlaneGeometry(0.3, CHUNK_LENGTH + 2);
   yLineGeo.rotateX(-Math.PI / 2);
   const l1 = new THREE.Mesh(yLineGeo, yellowLineMat);
   l1.position.set(-0.25, 0.02, 0);
@@ -1029,8 +1021,8 @@ function createCurvedChunk(zPos) {
     group.add(sRight);
   }
 
-  // 5. Sidewalk Curbs
-  const curbGeo = new THREE.BoxGeometry(2.5, 0.3, CHUNK_LENGTH + 1);
+  // 5. Sidewalk Curbs & Guardrails
+  const curbGeo = new THREE.BoxGeometry(2.5, 0.3, CHUNK_LENGTH + 2);
   const cL = new THREE.Mesh(curbGeo, curbMat);
   cL.position.set(-ROAD_WIDTH / 2 - 1.25, 0.15, 0);
   const cR = new THREE.Mesh(curbGeo, curbMat);
@@ -1038,8 +1030,7 @@ function createCurvedChunk(zPos) {
   group.add(cL);
   group.add(cR);
 
-  // 6. Cyan Guardrails
-  const railGeo = new THREE.BoxGeometry(0.25, 0.6, CHUNK_LENGTH + 1);
+  const railGeo = new THREE.BoxGeometry(0.25, 0.6, CHUNK_LENGTH + 2);
   const rL = new THREE.Mesh(railGeo, guardrailMat);
   rL.position.set(-ROAD_WIDTH / 2 - 0.15, 0.35, 0);
   const rR = new THREE.Mesh(railGeo, guardrailMat);
@@ -1047,35 +1038,35 @@ function createCurvedChunk(zPos) {
   group.add(rL);
   group.add(rR);
 
-  // 7. 3D Architectural Buildings & Trees
+  // 6. 3D Architectural Buildings & Trees
   for (let i = 0; i < 2; i++) {
     const bHeight = 35 + i * 25;
     const bGeo = new THREE.BoxGeometry(18, bHeight, 26);
     const bMat = bldgMats[(i + Math.abs(Math.floor(zPos / 100))) % bldgMats.length];
 
     const towerL = new THREE.Mesh(bGeo, bMat);
-    towerL.position.set(-ROAD_WIDTH / 2 - 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 20);
+    towerL.position.set(-ROAD_WIDTH / 2 - 24, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 20);
     group.add(towerL);
 
     const towerR = new THREE.Mesh(bGeo, bMat);
-    towerR.position.set(ROAD_WIDTH / 2 + 22, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 20);
+    towerR.position.set(ROAD_WIDTH / 2 + 24, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 20);
     group.add(towerR);
 
     // Glowing Windows
     const winGeo = new THREE.BoxGeometry(1.5, 2.0, 0.1);
     for (let f = 6; f < bHeight - 6; f += 6) {
       const wL = new THREE.Mesh(winGeo, winLitMat);
-      wL.position.set(-ROAD_WIDTH / 2 - 12.8, f, -CHUNK_LENGTH / 2 + i * 50 + 20);
+      wL.position.set(-ROAD_WIDTH / 2 - 14.8, f, -CHUNK_LENGTH / 2 + i * 50 + 20);
       wL.rotation.y = Math.PI / 2;
       group.add(wL);
 
       const wR = new THREE.Mesh(winGeo, winLitMat);
-      wR.position.set(ROAD_WIDTH / 2 + 12.8, f, -CHUNK_LENGTH / 2 + i * 50 + 20);
+      wR.position.set(ROAD_WIDTH / 2 + 14.8, f, -CHUNK_LENGTH / 2 + i * 50 + 20);
       wR.rotation.y = -Math.PI / 2;
       group.add(wR);
     }
 
-    // Nature Pine Trees
+    // Pine Trees
     const trunkGeo = new THREE.CylinderGeometry(0.35, 0.45, 5, 8);
     const tL = new THREE.Mesh(trunkGeo, trunkMat);
     tL.position.set(-ROAD_WIDTH / 2 - 3.2, 2.5, -CHUNK_LENGTH / 2 + i * 50 + 40);
@@ -1145,7 +1136,7 @@ function spawnTraffic() {
     const lane = (i % 2 === 0) ? (i % 4 < 2 ? 0 : 1) : (i % 4 < 2 ? 2 : 3);
     const isOncoming = (lane < 2);
     const carMesh = createRealisticSupercarMesh(colors[i % colors.length], 'apex_gt', isOncoming);
-    const z = -90 - i * 75;
+    const z = -120 - i * 85;
     const curveX = getRoadCurveX(z);
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
     carMesh.position.set(x, 0, z);
@@ -1154,7 +1145,7 @@ function spawnTraffic() {
       mesh: carMesh,
       lane,
       isOncoming,
-      speed: isOncoming ? (0.3 + Math.random() * 0.12) : (0.45 + Math.random() * 0.15)
+      speed: isOncoming ? (0.28 + Math.random() * 0.12) : (0.42 + Math.random() * 0.15)
     });
   }
 }
@@ -1313,6 +1304,12 @@ function initRace() {
   distanceDriven = 0;
   sessionGold = 0; sessionSilver = 0;
 
+  // Reset road chunks seamlessly
+  for (let i = 0; i < NUM_CHUNKS; i++) {
+    chunks[i].position.z = -i * CHUNK_LENGTH;
+    chunks[i].position.x = getRoadCurveX(chunks[i].position.z);
+  }
+
   document.getElementById('menuScreen').classList.add('hide');
   document.getElementById('hud').classList.add('active');
   document.getElementById('topBtns').style.display = 'flex';
@@ -1375,11 +1372,12 @@ function updatePhysics(delta) {
     playerSteer *= 0.85;
   }
 
-  // Off-road collision
-  const offRoadOffset = Math.abs(playerX - roadCenterX);
-  if (offRoadOffset > ROAD_WIDTH / 2 + 1.8) {
-    handleCrash('💥 CRASHED INTO TREE!');
-    return;
+  // Smooth Off-road barrier clamping (Prevents sudden crashes/falling off world)
+  const offRoadOffset = playerX - roadCenterX;
+  if (Math.abs(offRoadOffset) > ROAD_WIDTH / 2 + 1.2) {
+    playerX = roadCenterX + Math.sign(offRoadOffset) * (ROAD_WIDTH / 2 + 1.2);
+    playerSpeed = Math.max(playerSpeed * 0.95, 20); // Gentle slow down against guardrail
+    if (navigator.vibrate) navigator.vibrate(20);
   }
 
   playerZ -= (playerSpeed / 3.6) * delta;
@@ -1398,12 +1396,17 @@ function updatePhysics(delta) {
 
   sound.updateEngine(playerSpeed, playerMaxSpeed, keys.forward || keys.backward, isReverse);
 
+  // Seamless Infinite Chunk Wrapping Ahead
   chunks.forEach(chunk => {
     if (chunk.position.z > playerZ + CHUNK_LENGTH) {
       chunk.position.z -= NUM_CHUNKS * CHUNK_LENGTH;
       chunk.position.x = getRoadCurveX(chunk.position.z);
     }
   });
+
+  // Mountains & Horizon smoothly follow the player forever (Never end!)
+  horizonGroup.position.z = playerZ;
+  horizonGroup.position.x = roadCenterX * 0.3;
 
   // AI Rivals
   aiRivalMeshes.forEach(r => {
@@ -1426,11 +1429,11 @@ function updatePhysics(delta) {
     const cX = getRoadCurveX(t.mesh.position.z);
     t.mesh.position.x = cX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + t.lane * LANE_WIDTH;
 
-    if (t.mesh.position.z > playerZ + 50) {
-      t.mesh.position.z = playerZ - 320 - Math.random() * 80;
+    if (t.mesh.position.z > playerZ + 60) {
+      t.mesh.position.z = playerZ - 360 - Math.random() * 100;
       t.lane = t.isOncoming ? (Math.random() < 0.5 ? 0 : 1) : (Math.random() < 0.5 ? 2 : 3);
-    } else if (t.mesh.position.z < playerZ - 420) {
-      t.mesh.position.z = playerZ - 60;
+    } else if (t.mesh.position.z < playerZ - 500) {
+      t.mesh.position.z = playerZ - 80;
     }
 
     const dx = Math.abs(t.mesh.position.x - playerX);
@@ -1442,7 +1445,7 @@ function updatePhysics(delta) {
   pickupItems.forEach(item => {
     item.mesh.rotation.y += delta * 3;
     if (item.mesh.position.z > playerZ + 20) {
-      item.mesh.position.z = playerZ - 260 - Math.random() * 60;
+      item.mesh.position.z = playerZ - 300 - Math.random() * 80;
       const cX = getRoadCurveX(item.mesh.position.z);
       item.mesh.position.x = cX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + (2 + Math.floor(Math.random() * 2)) * LANE_WIDTH;
     }
@@ -1453,7 +1456,7 @@ function updatePhysics(delta) {
       else if (item.type === 'gold') { userData.gold += 15; sessionGold += 15; }
       else if (item.type === 'silver') { userData.silver += 25; sessionSilver += 25; }
       saveUserData();
-      item.mesh.position.z -= 280;
+      item.mesh.position.z -= 320;
     }
   });
 
@@ -1462,7 +1465,7 @@ function updatePhysics(delta) {
 }
 
 function updateCamera() {
-  const curveLookX = getRoadCurveX(playerZ - 18);
+  const curveLookX = getRoadCurveX(playerZ - 20);
   if (cameraMode === 0) {
     camera.position.lerp(new THREE.Vector3(playerX * 0.75 + curveLookX * 0.25, 4.2, playerZ + 7.5), 0.15);
     camera.lookAt(playerX, 1.2, playerZ - 12);
