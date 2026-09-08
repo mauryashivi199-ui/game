@@ -455,7 +455,7 @@
       <div class="mode-card" onclick="startSinglePlayer('traffic')">
         <div class="mode-icon">🛣️</div>
         <div class="mode-title">Endless Highway</div>
-        <div class="mode-desc">Crystal clear highway view, horizon mountains & music!</div>
+        <div class="mode-desc">Solid 3D road, yellow lane markings & racing tunes!</div>
       </div>
       <div class="mode-card" onclick="openMultiplayerModal()">
         <div class="mode-icon">👥</div>
@@ -832,10 +832,10 @@ function handlePhotoUpload(event) {
   reader.readAsDataURL(file);
 }
 
-/* --- ULTRA BRIGHT 3D GRAPHICS SCENE & INFINITE HORIZON --- */
+/* --- ULTRA BRIGHT 3D GRAPHICS SCENE --- */
 const canvas = document.getElementById('webgl-canvas');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x38bdf8); // Sunny Sky Blue
+scene.background = new THREE.Color(0x38bdf8); // Clean Bright Blue Sky
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -843,28 +843,34 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // Ambient & Sunlight
-const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
 scene.add(ambientLight);
 
-const sunLight = new THREE.DirectionalLight(0xfffaed, 2.2);
+const sunLight = new THREE.DirectionalLight(0xfffaed, 2.0);
 sunLight.position.set(40, 100, 40);
 scene.add(sunLight);
 
-// Infinite Follow Horizon Group (Mountains + Sky Backdrop)
+// Distant Mountains Placed Only on Distant Left and Right Flanks (Never on the Road!)
 const horizonGroup = new THREE.Group();
 const mMat1 = new THREE.MeshBasicMaterial({ color: 0x0284c7 });
 const mMat2 = new THREE.MeshBasicMaterial({ color: 0x0369a1 });
 
-for (let m = 0; m < 28; m++) {
-  const mHeight = 80 + (m % 5) * 30;
-  const mGeo = new THREE.ConeGeometry(50 + (m % 3) * 20, mHeight, 5);
-  const mountain = new THREE.Mesh(mGeo, (m % 2 === 0) ? mMat1 : mMat2);
-  mountain.position.set(-450 + m * 34, mHeight / 2 - 20, -500 - (m % 4) * 50);
-  horizonGroup.add(mountain);
+for (let m = 0; m < 14; m++) {
+  // Left Mountains
+  const mGeoL = new THREE.ConeGeometry(60 + (m % 3) * 20, 90 + (m % 4) * 25, 5);
+  const mountL = new THREE.Mesh(mGeoL, mMat1);
+  mountL.position.set(-180 - (m % 4) * 40, 35, -150 - m * 60);
+  horizonGroup.add(mountL);
+
+  // Right Mountains
+  const mGeoR = new THREE.ConeGeometry(60 + (m % 3) * 20, 90 + (m % 4) * 25, 5);
+  const mountR = new THREE.Mesh(mGeoR, mMat2);
+  mountR.position.set(180 + (m % 4) * 40, 35, -150 - m * 60);
+  horizonGroup.add(mountR);
 }
 scene.add(horizonGroup);
 
-/* --- DETAILED 3D SUPERCAR MESH WITH SMART TRANSPARENCY --- */
+/* --- DETAILED 3D SUPERCAR MESH --- */
 function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt', isOncoming = false, isPlayer = false) {
   const car = new THREE.Group();
 
@@ -874,14 +880,13 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   chassis.position.y = 0.32;
   car.add(chassis);
 
-  // Player car has slight glass see-through transparency so oncoming cars are 100% visible!
   const bodyGeo = new THREE.BoxGeometry(2.05, 0.54, 4.4);
   const bodyMat = new THREE.MeshStandardMaterial({
     color: colorHex,
     roughness: 0.2,
     metalness: 0.8,
     transparent: isPlayer,
-    opacity: isPlayer ? 0.78 : 1.0
+    opacity: isPlayer ? 0.85 : 1.0
   });
   const body = new THREE.Mesh(bodyGeo, bodyMat);
   body.position.y = 0.64;
@@ -905,7 +910,6 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   spoiler.position.set(0, 1.28, 2.0);
   car.add(spoiler);
 
-  // Ultra-Bright Headlights with Forward Warning Beam for Oncoming Cars
   const lightGeo = new THREE.BoxGeometry(0.42, 0.14, 0.1);
   const lightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const lLight = new THREE.Mesh(lightGeo, lightMat);
@@ -916,7 +920,6 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   car.add(rLight);
 
   if (isOncoming) {
-    // Glowing Overhead Yellow Indicator Beam on oncoming traffic
     const beaconGeo = new THREE.ConeGeometry(0.5, 3.5, 8);
     beaconGeo.rotateX(Math.PI);
     const beaconMat = new THREE.MeshBasicMaterial({ color: 0xffd60a, transparent: true, opacity: 0.65 });
@@ -969,7 +972,7 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   return car;
 }
 
-/* --- SEAMLESS INFINITE 3D HIGHWAY --- */
+/* --- 100% SOLID 3D HIGHWAY WITH SHARP VISIBILITY (1600 METERS AHEAD) --- */
 const ROAD_WIDTH = 24;
 const LANES = 4;
 const LANE_WIDTH = ROAD_WIDTH / LANES;
@@ -981,80 +984,88 @@ function getRoadCurveX(zPos) {
   return Math.sin(zPos * 0.003) * 14;
 }
 
-const roadMat = new THREE.MeshBasicMaterial({ color: 0x1e293b });
-const grassMat = new THREE.MeshBasicMaterial({ color: 0x16a34a });
+// Solid High-Contrast Materials
+const asphaltMat = new THREE.MeshBasicMaterial({ color: 0x1e293b }); // Charcoal Asphalt
+const grassMat = new THREE.MeshBasicMaterial({ color: 0x15803d });   // Vibrant Grass
 const yellowLineMat = new THREE.MeshBasicMaterial({ color: 0xffd60a });
 const whiteLineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
 const curbMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8 });
 const guardrailMat = new THREE.MeshBasicMaterial({ color: 0x00f5ff });
 
-const bldgMats = [
-  new THREE.MeshBasicMaterial({ color: 0x334155 }),
-  new THREE.MeshBasicMaterial({ color: 0x1e3a8a }),
-  new THREE.MeshBasicMaterial({ color: 0x0f766e }),
-  new THREE.MeshBasicMaterial({ color: 0x475569 })
-];
+const bldgColors = [0x334155, 0x1e3a8a, 0x0f766e, 0x475569];
 const winLitMat = new THREE.MeshBasicMaterial({ color: 0xffd60a });
 const trunkMat = new THREE.MeshBasicMaterial({ color: 0x78350f });
-const leavesMat = new THREE.MeshBasicMaterial({ color: 0x15803d });
+const leavesMat = new THREE.MeshBasicMaterial({ color: 0x16a34a });
 
 function createCurvedChunk(zPos) {
   const group = new THREE.Group();
   group.position.z = zPos;
   group.position.x = getRoadCurveX(zPos);
 
-  const grassGeo = new THREE.PlaneGeometry(320, CHUNK_LENGTH + 2);
-  grassGeo.rotateX(-Math.PI / 2);
+  // 1. Solid Green Grass Terrain Box
+  const grassGeo = new THREE.BoxGeometry(320, 0.4, CHUNK_LENGTH + 2);
   const grass = new THREE.Mesh(grassGeo, grassMat);
-  grass.position.y = -0.05;
+  grass.position.y = -0.22;
   group.add(grass);
 
-  const roadGeo = new THREE.PlaneGeometry(ROAD_WIDTH, CHUNK_LENGTH + 2);
-  roadGeo.rotateX(-Math.PI / 2);
-  const road = new THREE.Mesh(roadGeo, roadMat);
+  // 2. Solid 3D Charcoal Asphalt Road
+  const roadGeo = new THREE.BoxGeometry(ROAD_WIDTH, 0.3, CHUNK_LENGTH + 2);
+  const road = new THREE.Mesh(roadGeo, asphaltMat);
   road.position.y = 0.0;
   group.add(road);
 
-  const yLineGeo = new THREE.PlaneGeometry(0.3, CHUNK_LENGTH + 2);
-  yLineGeo.rotateX(-Math.PI / 2);
+  // 3. Center Double Yellow Lines (Raised slightly)
+  const yLineGeo = new THREE.BoxGeometry(0.3, 0.08, CHUNK_LENGTH + 2);
   const l1 = new THREE.Mesh(yLineGeo, yellowLineMat);
-  l1.position.set(-0.25, 0.02, 0);
+  l1.position.set(-0.25, 0.16, 0);
   const l2 = new THREE.Mesh(yLineGeo, yellowLineMat);
-  l2.position.set(0.25, 0.02, 0);
+  l2.position.set(0.25, 0.16, 0);
   group.add(l1);
   group.add(l2);
 
-  const stripeGeo = new THREE.PlaneGeometry(0.22, 6);
-  stripeGeo.rotateX(-Math.PI / 2);
+  // 4. Outer Shoulder Yellow Lines
+  const edgeLineGeo = new THREE.BoxGeometry(0.35, 0.08, CHUNK_LENGTH + 2);
+  const elL = new THREE.Mesh(edgeLineGeo, yellowLineMat);
+  elL.position.set(-ROAD_WIDTH / 2 + 0.35, 0.16, 0);
+  const elR = new THREE.Mesh(edgeLineGeo, yellowLineMat);
+  elR.position.set(ROAD_WIDTH / 2 - 0.35, 0.16, 0);
+  group.add(elL);
+  group.add(elR);
+
+  // 5. White Dashed Lane Dividers
+  const stripeGeo = new THREE.BoxGeometry(0.22, 0.08, 6);
   for (let s = -CHUNK_LENGTH / 2 + 5; s < CHUNK_LENGTH / 2; s += 14) {
     const sLeft = new THREE.Mesh(stripeGeo, whiteLineMat);
-    sLeft.position.set(-LANE_WIDTH, 0.02, s);
+    sLeft.position.set(-LANE_WIDTH, 0.16, s);
     const sRight = new THREE.Mesh(stripeGeo, whiteLineMat);
-    sRight.position.set(LANE_WIDTH, 0.02, s);
+    sRight.position.set(LANE_WIDTH, 0.16, s);
     group.add(sLeft);
     group.add(sRight);
   }
 
-  const curbGeo = new THREE.BoxGeometry(2.5, 0.3, CHUNK_LENGTH + 2);
+  // 6. Sidewalk Curbs
+  const curbGeo = new THREE.BoxGeometry(2.5, 0.45, CHUNK_LENGTH + 2);
   const cL = new THREE.Mesh(curbGeo, curbMat);
-  cL.position.set(-ROAD_WIDTH / 2 - 1.25, 0.15, 0);
+  cL.position.set(-ROAD_WIDTH / 2 - 1.25, 0.22, 0);
   const cR = new THREE.Mesh(curbGeo, curbMat);
-  cR.position.set(ROAD_WIDTH / 2 + 1.25, 0.15, 0);
+  cR.position.set(ROAD_WIDTH / 2 + 1.25, 0.22, 0);
   group.add(cL);
   group.add(cR);
 
-  const railGeo = new THREE.BoxGeometry(0.25, 0.6, CHUNK_LENGTH + 2);
+  // 7. Cyan Guardrails
+  const railGeo = new THREE.BoxGeometry(0.25, 0.7, CHUNK_LENGTH + 2);
   const rL = new THREE.Mesh(railGeo, guardrailMat);
-  rL.position.set(-ROAD_WIDTH / 2 - 0.15, 0.35, 0);
+  rL.position.set(-ROAD_WIDTH / 2 - 0.15, 0.45, 0);
   const rR = new THREE.Mesh(railGeo, guardrailMat);
-  rR.position.set(ROAD_WIDTH / 2 + 0.15, 0.35, 0);
+  rR.position.set(ROAD_WIDTH / 2 + 0.15, 0.45, 0);
   group.add(rL);
   group.add(rR);
 
+  // 8. 3D Buildings & Trees Along Sides
   for (let i = 0; i < 2; i++) {
     const bHeight = 35 + i * 25;
     const bGeo = new THREE.BoxGeometry(18, bHeight, 26);
-    const bMat = bldgMats[(i + Math.abs(Math.floor(zPos / 100))) % bldgMats.length];
+    const bMat = new THREE.MeshBasicMaterial({ color: bldgColors[(i + Math.abs(Math.floor(zPos / 100))) % bldgColors.length] });
 
     const towerL = new THREE.Mesh(bGeo, bMat);
     towerL.position.set(-ROAD_WIDTH / 2 - 24, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 20);
@@ -1064,6 +1075,7 @@ function createCurvedChunk(zPos) {
     towerR.position.set(ROAD_WIDTH / 2 + 24, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 20);
     group.add(towerR);
 
+    // Glowing Windows
     const winGeo = new THREE.BoxGeometry(1.5, 2.0, 0.1);
     for (let f = 6; f < bHeight - 6; f += 6) {
       const wL = new THREE.Mesh(winGeo, winLitMat);
@@ -1077,6 +1089,7 @@ function createCurvedChunk(zPos) {
       group.add(wR);
     }
 
+    // Pine Trees
     const trunkGeo = new THREE.CylinderGeometry(0.35, 0.45, 5, 8);
     const tL = new THREE.Mesh(trunkGeo, trunkMat);
     tL.position.set(-ROAD_WIDTH / 2 - 3.2, 2.5, -CHUNK_LENGTH / 2 + i * 50 + 40);
@@ -1405,6 +1418,7 @@ function updatePhysics(delta) {
 
   sound.updateEngine(playerSpeed, playerMaxSpeed, keys.forward || keys.backward, isReverse);
 
+  // Seamless Infinite Chunk Wrapping
   chunks.forEach(chunk => {
     if (chunk.position.z > playerZ + CHUNK_LENGTH) {
       chunk.position.z -= NUM_CHUNKS * CHUNK_LENGTH;
@@ -1471,23 +1485,19 @@ function updatePhysics(delta) {
   updateHUD();
 }
 
-/* --- ELEVATED WIDE-VIEW CAMERA FOR ZERO BLIND SPOTS --- */
+/* --- ELEVATED WIDE-VIEW CAMERA --- */
 function updateCamera() {
   const curveLookX = getRoadCurveX(playerZ - 35);
   if (cameraMode === 0) {
-    // High-Angle Elevated View: Camera looks over the car so all oncoming cars are completely visible!
     camera.position.lerp(new THREE.Vector3(playerX * 0.75 + curveLookX * 0.25, 5.6, playerZ + 9.5), 0.16);
     camera.lookAt(playerX * 0.4 + curveLookX * 0.6, 1.2, playerZ - 28);
   } else if (cameraMode === 1) {
-    // Hood View (Direct Front Road View)
     camera.position.set(playerX, 1.35, playerZ - 1.2);
     camera.lookAt(curveLookX, 1.2, playerZ - 45);
   } else if (cameraMode === 2) {
-    // Cockpit Driver View
     camera.position.set(playerX - 0.35, 1.15, playerZ + 0.1);
     camera.lookAt(curveLookX, 1.1, playerZ - 35);
   } else if (cameraMode === 3) {
-    // Top-Down Bird's Eye View
     camera.position.set(playerX, 22, playerZ + 8);
     camera.lookAt(playerX, 0, playerZ - 15);
   }
