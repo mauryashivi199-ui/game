@@ -455,7 +455,7 @@
       <div class="mode-card" onclick="startSinglePlayer('traffic')">
         <div class="mode-icon">🛣️</div>
         <div class="mode-title">Endless Highway</div>
-        <div class="mode-desc">Infinite road with smooth curves, horizon mountains & music!</div>
+        <div class="mode-desc">Crystal clear highway view, horizon mountains & music!</div>
       </div>
       <div class="mode-card" onclick="openMultiplayerModal()">
         <div class="mode-icon">👥</div>
@@ -837,7 +837,7 @@ const canvas = document.getElementById('webgl-canvas');
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x38bdf8); // Sunny Sky Blue
 
-const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 2000);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -864,8 +864,8 @@ for (let m = 0; m < 28; m++) {
 }
 scene.add(horizonGroup);
 
-/* --- DETAILED 3D SUPERCAR MESH --- */
-function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt', isOncoming = false) {
+/* --- DETAILED 3D SUPERCAR MESH WITH SMART TRANSPARENCY --- */
+function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt', isOncoming = false, isPlayer = false) {
   const car = new THREE.Group();
 
   const chassisGeo = new THREE.BoxGeometry(2.1, 0.24, 4.6);
@@ -874,8 +874,15 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   chassis.position.y = 0.32;
   car.add(chassis);
 
+  // Player car has slight glass see-through transparency so oncoming cars are 100% visible!
   const bodyGeo = new THREE.BoxGeometry(2.05, 0.54, 4.4);
-  const bodyMat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.2, metalness: 0.8 });
+  const bodyMat = new THREE.MeshStandardMaterial({
+    color: colorHex,
+    roughness: 0.2,
+    metalness: 0.8,
+    transparent: isPlayer,
+    opacity: isPlayer ? 0.78 : 1.0
+  });
   const body = new THREE.Mesh(bodyGeo, bodyMat);
   body.position.y = 0.64;
   car.add(body);
@@ -887,7 +894,7 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   car.add(hood);
 
   const cabinGeo = new THREE.BoxGeometry(1.64, 0.52, 2.1);
-  const glassMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+  const glassMat = new THREE.MeshBasicMaterial({ color: 0x0f172a, transparent: true, opacity: isPlayer ? 0.6 : 0.9 });
   const cabin = new THREE.Mesh(cabinGeo, glassMat);
   cabin.position.set(0, 1.08, -0.15);
   car.add(cabin);
@@ -898,6 +905,7 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   spoiler.position.set(0, 1.28, 2.0);
   car.add(spoiler);
 
+  // Ultra-Bright Headlights with Forward Warning Beam for Oncoming Cars
   const lightGeo = new THREE.BoxGeometry(0.42, 0.14, 0.1);
   const lightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const lLight = new THREE.Mesh(lightGeo, lightMat);
@@ -906,6 +914,16 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   rLight.position.set(0.72, 0.64, -2.26);
   car.add(lLight);
   car.add(rLight);
+
+  if (isOncoming) {
+    // Glowing Overhead Yellow Indicator Beam on oncoming traffic
+    const beaconGeo = new THREE.ConeGeometry(0.5, 3.5, 8);
+    beaconGeo.rotateX(Math.PI);
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xffd60a, transparent: true, opacity: 0.65 });
+    const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+    beacon.position.set(0, 3.2, 0);
+    car.add(beacon);
+  }
 
   const tailMat = new THREE.MeshBasicMaterial({ color: 0xff1744 });
   const lTail = new THREE.Mesh(lightGeo, tailMat);
@@ -951,7 +969,7 @@ function createRealisticSupercarMesh(colorHex = 0xff1744, carModelId = 'apex_gt'
   return car;
 }
 
-/* --- SEAMLESS INFINITE 3D HIGHWAY (16 CHUNKS = 1600 METERS AHEAD) --- */
+/* --- SEAMLESS INFINITE 3D HIGHWAY --- */
 const ROAD_WIDTH = 24;
 const LANES = 4;
 const LANE_WIDTH = ROAD_WIDTH / LANES;
@@ -985,21 +1003,18 @@ function createCurvedChunk(zPos) {
   group.position.z = zPos;
   group.position.x = getRoadCurveX(zPos);
 
-  // 1. Bright Grass Terrain
   const grassGeo = new THREE.PlaneGeometry(320, CHUNK_LENGTH + 2);
   grassGeo.rotateX(-Math.PI / 2);
   const grass = new THREE.Mesh(grassGeo, grassMat);
   grass.position.y = -0.05;
   group.add(grass);
 
-  // 2. Solid Road Surface
   const roadGeo = new THREE.PlaneGeometry(ROAD_WIDTH, CHUNK_LENGTH + 2);
   roadGeo.rotateX(-Math.PI / 2);
   const road = new THREE.Mesh(roadGeo, roadMat);
   road.position.y = 0.0;
   group.add(road);
 
-  // 3. Double Center Yellow Lines
   const yLineGeo = new THREE.PlaneGeometry(0.3, CHUNK_LENGTH + 2);
   yLineGeo.rotateX(-Math.PI / 2);
   const l1 = new THREE.Mesh(yLineGeo, yellowLineMat);
@@ -1009,7 +1024,6 @@ function createCurvedChunk(zPos) {
   group.add(l1);
   group.add(l2);
 
-  // 4. White Dashed Stripes
   const stripeGeo = new THREE.PlaneGeometry(0.22, 6);
   stripeGeo.rotateX(-Math.PI / 2);
   for (let s = -CHUNK_LENGTH / 2 + 5; s < CHUNK_LENGTH / 2; s += 14) {
@@ -1021,7 +1035,6 @@ function createCurvedChunk(zPos) {
     group.add(sRight);
   }
 
-  // 5. Sidewalk Curbs & Guardrails
   const curbGeo = new THREE.BoxGeometry(2.5, 0.3, CHUNK_LENGTH + 2);
   const cL = new THREE.Mesh(curbGeo, curbMat);
   cL.position.set(-ROAD_WIDTH / 2 - 1.25, 0.15, 0);
@@ -1038,7 +1051,6 @@ function createCurvedChunk(zPos) {
   group.add(rL);
   group.add(rR);
 
-  // 6. 3D Architectural Buildings & Trees
   for (let i = 0; i < 2; i++) {
     const bHeight = 35 + i * 25;
     const bGeo = new THREE.BoxGeometry(18, bHeight, 26);
@@ -1052,7 +1064,6 @@ function createCurvedChunk(zPos) {
     towerR.position.set(ROAD_WIDTH / 2 + 24, bHeight / 2, -CHUNK_LENGTH / 2 + i * 50 + 20);
     group.add(towerR);
 
-    // Glowing Windows
     const winGeo = new THREE.BoxGeometry(1.5, 2.0, 0.1);
     for (let f = 6; f < bHeight - 6; f += 6) {
       const wL = new THREE.Mesh(winGeo, winLitMat);
@@ -1066,7 +1077,6 @@ function createCurvedChunk(zPos) {
       group.add(wR);
     }
 
-    // Pine Trees
     const trunkGeo = new THREE.CylinderGeometry(0.35, 0.45, 5, 8);
     const tL = new THREE.Mesh(trunkGeo, trunkMat);
     tL.position.set(-ROAD_WIDTH / 2 - 3.2, 2.5, -CHUNK_LENGTH / 2 + i * 50 + 40);
@@ -1108,7 +1118,7 @@ function spawnAiRivals() {
   aiRivalMeshes.length = 0;
 
   AI_RIVALS_DATA.forEach(rData => {
-    const mesh = createRealisticSupercarMesh(rData.color, rData.carId, false);
+    const mesh = createRealisticSupercarMesh(rData.color, rData.carId, false, false);
     mesh.position.z = rData.zOffset;
     const cX = getRoadCurveX(mesh.position.z);
     mesh.position.x = cX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + rData.lane * LANE_WIDTH;
@@ -1135,7 +1145,7 @@ function spawnTraffic() {
   for (let i = 0; i < 6; i++) {
     const lane = (i % 2 === 0) ? (i % 4 < 2 ? 0 : 1) : (i % 4 < 2 ? 2 : 3);
     const isOncoming = (lane < 2);
-    const carMesh = createRealisticSupercarMesh(colors[i % colors.length], 'apex_gt', isOncoming);
+    const carMesh = createRealisticSupercarMesh(colors[i % colors.length], 'apex_gt', isOncoming, false);
     const z = -120 - i * 85;
     const curveX = getRoadCurveX(z);
     const x = curveX - ROAD_WIDTH / 2 + LANE_WIDTH / 2 + lane * LANE_WIDTH;
@@ -1181,7 +1191,7 @@ function spawnPickups() {
 let playerCarMesh = null;
 function createPlayerVehicle() {
   if (playerCarMesh) scene.remove(playerCarMesh);
-  playerCarMesh = createRealisticSupercarMesh(userData.carColor, userData.selectedCar, false);
+  playerCarMesh = createRealisticSupercarMesh(userData.carColor, userData.selectedCar, false, true);
   playerCarMesh.position.set(0, 0, 0);
   scene.add(playerCarMesh);
 }
@@ -1304,7 +1314,6 @@ function initRace() {
   distanceDriven = 0;
   sessionGold = 0; sessionSilver = 0;
 
-  // Reset road chunks seamlessly
   for (let i = 0; i < NUM_CHUNKS; i++) {
     chunks[i].position.z = -i * CHUNK_LENGTH;
     chunks[i].position.x = getRoadCurveX(chunks[i].position.z);
@@ -1372,11 +1381,11 @@ function updatePhysics(delta) {
     playerSteer *= 0.85;
   }
 
-  // Smooth Off-road barrier clamping (Prevents sudden crashes/falling off world)
+  // Smooth Off-road barrier clamping
   const offRoadOffset = playerX - roadCenterX;
   if (Math.abs(offRoadOffset) > ROAD_WIDTH / 2 + 1.2) {
     playerX = roadCenterX + Math.sign(offRoadOffset) * (ROAD_WIDTH / 2 + 1.2);
-    playerSpeed = Math.max(playerSpeed * 0.95, 20); // Gentle slow down against guardrail
+    playerSpeed = Math.max(playerSpeed * 0.95, 20);
     if (navigator.vibrate) navigator.vibrate(20);
   }
 
@@ -1396,7 +1405,6 @@ function updatePhysics(delta) {
 
   sound.updateEngine(playerSpeed, playerMaxSpeed, keys.forward || keys.backward, isReverse);
 
-  // Seamless Infinite Chunk Wrapping Ahead
   chunks.forEach(chunk => {
     if (chunk.position.z > playerZ + CHUNK_LENGTH) {
       chunk.position.z -= NUM_CHUNKS * CHUNK_LENGTH;
@@ -1404,7 +1412,6 @@ function updatePhysics(delta) {
     }
   });
 
-  // Mountains & Horizon smoothly follow the player forever (Never end!)
   horizonGroup.position.z = playerZ;
   horizonGroup.position.x = roadCenterX * 0.3;
 
@@ -1464,20 +1471,25 @@ function updatePhysics(delta) {
   updateHUD();
 }
 
+/* --- ELEVATED WIDE-VIEW CAMERA FOR ZERO BLIND SPOTS --- */
 function updateCamera() {
-  const curveLookX = getRoadCurveX(playerZ - 20);
+  const curveLookX = getRoadCurveX(playerZ - 35);
   if (cameraMode === 0) {
-    camera.position.lerp(new THREE.Vector3(playerX * 0.75 + curveLookX * 0.25, 4.2, playerZ + 7.5), 0.15);
-    camera.lookAt(playerX, 1.2, playerZ - 12);
+    // High-Angle Elevated View: Camera looks over the car so all oncoming cars are completely visible!
+    camera.position.lerp(new THREE.Vector3(playerX * 0.75 + curveLookX * 0.25, 5.6, playerZ + 9.5), 0.16);
+    camera.lookAt(playerX * 0.4 + curveLookX * 0.6, 1.2, playerZ - 28);
   } else if (cameraMode === 1) {
-    camera.position.set(playerX, 1.15, playerZ - 0.2);
-    camera.lookAt(curveLookX, 1.1, playerZ - 30);
+    // Hood View (Direct Front Road View)
+    camera.position.set(playerX, 1.35, playerZ - 1.2);
+    camera.lookAt(curveLookX, 1.2, playerZ - 45);
   } else if (cameraMode === 2) {
-    camera.position.set(playerX, 1.4, playerZ - 1.8);
-    camera.lookAt(curveLookX, 1.2, playerZ - 35);
+    // Cockpit Driver View
+    camera.position.set(playerX - 0.35, 1.15, playerZ + 0.1);
+    camera.lookAt(curveLookX, 1.1, playerZ - 35);
   } else if (cameraMode === 3) {
-    camera.position.set(playerX, 18, playerZ + 6);
-    camera.lookAt(playerX, 0, playerZ - 8);
+    // Top-Down Bird's Eye View
+    camera.position.set(playerX, 22, playerZ + 8);
+    camera.lookAt(playerX, 0, playerZ - 15);
   }
 }
 
@@ -1526,7 +1538,11 @@ function finishGame(won = true) {
   document.getElementById('goScoreText').innerText = 'Distance: ' + Math.floor(distanceDriven) + ' m';
 }
 
-function toggleCamera() { cameraMode = (cameraMode + 1) % 4; }
+function toggleCamera() {
+  cameraMode = (cameraMode + 1) % 4;
+  const camNames = ['High Chase View', 'Front Hood View', 'Cockpit View', 'Top Drone View'];
+  showNotification('🎥 ' + camNames[cameraMode]);
+}
 function toggleAudio() { sound.muted = !sound.muted; if (sound.muted) sound.stopEngine(); }
 function pauseGame() { if (!isPlaying) return; isPaused = true; document.getElementById('pauseModal').classList.remove('hide'); }
 function resumeGame() { isPaused = false; document.getElementById('pauseModal').classList.add('hide'); }
